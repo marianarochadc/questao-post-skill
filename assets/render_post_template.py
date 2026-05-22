@@ -333,18 +333,30 @@ def slide_hook():
 # Fundo cream + card off com sombra + card branco com border navy +
 # badge "Flashcard MedPro" flutuante + Helvetica + cloze azul inline
 # ============================================================
-HELVETICA = "/System/Library/Fonts/Helvetica.ttc"
-
 def FH(size, style="regular"):
-    """Helvetica (system) — pergunta dentro do card."""
-    idx = {"regular": 0, "bold": 1, "italic": 2}[style]
-    try:
-        return ImageFont.truetype(HELVETICA, size, index=idx)
-    except Exception:
-        fb = {"regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
-              "bold":    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-              "italic":  "/System/Library/Fonts/Supplemental/Arial Italic.ttf"}[style]
-        return ImageFont.truetype(fb, size)
+    """Arial — usado dentro dos cards Anki como sans-serif neutro.
+    Arial renderiza com qualidade muito melhor que Helvetica do macOS no PIL.
+    Mantém o look "Helvetica, Arial, sans-serif" do JSX original.
+    """
+    fonts = {"regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
+             "bold":    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+             "italic":  "/System/Library/Fonts/Supplemental/Arial Italic.ttf"}
+    return ImageFont.truetype(fonts[style], size)
+
+def clean_white_bg(img):
+    """Força branco puro nos pixels quase-brancos do JPG.
+    Resolve o halo cinza/bege dos botões Anki sobre card branco.
+    """
+    from PIL import ImageOps
+    im = img.convert("RGB")
+    # Approach: pra cada pixel, se R>235 e G>235 e B>235, vira branco puro
+    pixels = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b = pixels[x, y]
+            if r > 235 and g > 235 and b > 235:
+                pixels[x, y] = (255, 255, 255)
+    return im
 
 def draw_cloze_line(d, segments, y_baseline, font_q, font_cloze, center_x, max_w):
     """Desenha uma linha com segmentos mistos (texto normal + cloze).
@@ -566,11 +578,13 @@ def slide_anki_card(headline, pergunta_segments, extra=None,
         bottom_after_img = extra_y if extra else (pergunta_y + pergunta_h)
 
     # Botões Anki sempre — fica DENTRO do card branco no rodapé
-    btns = Image.open(f"{BRAND}/anki-buttons.jpg").convert("RGB")
+    btns_raw = Image.open(f"{BRAND}/anki-buttons.jpg").convert("RGB")
     btns_w_target = int(inner_content_max_w * 0.85)
-    btns_ratio = btns_w_target / btns.width
-    btns_h_final = int(btns.height * btns_ratio)
-    btns = btns.resize((btns_w_target, btns_h_final), Image.LANCZOS)
+    btns_ratio = btns_w_target / btns_raw.width
+    btns_h_final = int(btns_raw.height * btns_ratio)
+    btns = btns_raw.resize((btns_w_target, btns_h_final), Image.LANCZOS)
+    # Tratar fundo: pixels quase-brancos viram branco puro pra match no card
+    btns = clean_white_bg(btns)
     btns_y = bottom_after_img + 28
     btns_x = inner_margin_x + (inner_w - btns_w_target) // 2
     img.paste(btns, (btns_x, btns_y))
