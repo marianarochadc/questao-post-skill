@@ -17,11 +17,18 @@ Pega uma questão (texto + imagens) e gera:
 ## Identidade visual (resumida)
 
 - **Paleta**: navy `#0F2340`, off `#FAFAF7`, cream `#EFE9D9`, red `#C9352B`, gold `#C9A961`, black `#0A0A0A`, cloze blue `#1F00FF`
-- **Fontes**: Fraunces (headlines 800-900), Inter (corpo 400-700), Caveat (assinatura "Feito por aprovados"), JetBrains Mono (eyebrows `§ NN —`, folio)
-- **Logo MedPro**: SÓ na capa e CTA final. Lâminas do meio sem logo.
-- **Folio**: `PADRÃO MEDPRO / DIRETO AO PONTO` no canto inferior direito (não usar paginação numérica)
-- **Pontuação como ornamento**: ponto/interrogação gigante em `RED` ou `GOLD`
+- **Fontes**: Fraunces (headlines 800-900), Inter (corpo 400-700), Caveat (assinatura "Feito por aprovados")
+- **Header em TODOS os slides**: logo MedPro à esquerda + `@medproflashcards` à direita + linha divisória sutil
+- **Pontuação como ornamento**: ponto/interrogação gigante em `RED`
 - **Referências editoriais**: Bloomberg Businessweek, Osler, NYT Magazine, Granta
+
+## REGRAS DURAS (não negociáveis)
+
+1. **NUNCA usar eyebrow.** Nada de `§ 02 — Tese`, "§ NN — XYZ" no topo de slides, bolinhas vermelhas com texto, etc. Foi removido em definitivo. O header com logo + handle já cumpre o papel de assinatura editorial.
+2. **Logo + @medproflashcards no topo de TODOS os slides** (inclusive capa, hook, dx, manejo, CTA). Linha divisória sutil abaixo.
+3. **Sem labels A/B/C/D em imagens** quando elas são meramente cortes sequenciais. Use labels só quando a questão pede comparação explícita entre múltiplas alternativas (caso raro).
+4. **Capa**: nome da banca + ano EM CIMA, GIGANTES (Fraunces 900, ~190-200px), seguido por pergunta menor (Fraunces 700, ~56-60px). Sem assinatura Caveat duplicando o branding (já tem logo no header).
+5. **Sem JetBrains Mono.** Substituído por Inter weight 600 com tracking wider quando precisar de "rótulo técnico".
 
 Detalhes completos em [references/design-system.md](references/design-system.md).
 

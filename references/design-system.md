@@ -129,17 +129,24 @@ def apply_paper(canvas, paper_path, dark=False, opacity=0.4):
 
 ## Regras editoriais (SEM EXCEÇÃO)
 
-1. **Pontuação como ornamento**: ponto final / interrogação em `RED` ou `GOLD`, peso 900. Tamanho desproporcional permitido.
-2. **Eyebrow padrão**: `§ <NÚMERO> — <TIPO>` em JetBrains Mono, caixa alta, tracking 0.32em, em `RED` ou `GOLD`.
-3. **Folio (canto inferior direito)**: JetBrains Mono, `PADRÃO MEDPRO / DIRETO AO PONTO`. **NUNCA usar paginação `01/09`, `p. 02`** — o Instagram já mostra contagem nativa.
-4. **Headlines em Fraunces 800-900**, leading apertado (0.86-0.92), tracking negativo (-0.035 a -0.045em).
-5. **Citações**: aspas tipográficas `"` em tamanho monumental (300px+) em `RED`.
-6. **Drop cap**: primeira letra em Fraunces 900 + `RED` no parágrafo de abertura.
-7. **Carimbo (stamp)**: logo rotacionado 6-8°, opacidade 0.9-1.0.
-8. **Assinatura Caveat**: rotação leve (-2 a -3°) em `GOLD` ou `RED`.
-9. **Sem emoji, sem ícones decorativos.** O neurônio (logo) é o único símbolo.
-10. **Sem cantos arredondados** em imagens (ou raio máximo 4px).
-11. **Imagens com `aspect-ratio: cover`**, sem mascaras suaves.
+### REGRAS DURAS — nunca quebrar
+
+1. **NUNCA usar eyebrow.** Proibido: `§ NN — TÍTULO`, bolinha vermelha + texto kicker, "QUESTÃO 17" em letterspacing wide no topo, etc. O header com logo + handle já assina visualmente. Eyebrow é ruído.
+2. **Header padronizado em TODOS os slides**: logo MedPro à esquerda (y=80, altura ~58px) + `@medproflashcards` Inter 600 à direita + linha divisória sutil em y=165. Vale pra capa, hook navy, cards Anki, manejo, CTA — todos.
+3. **Sem labels A/B/C/D** sobre imagens quando são cortes sequenciais. Use apenas quando a questão pede comparação explícita.
+4. **Sem JetBrains Mono.** Quando precisar de "rótulo técnico" estilo mono, use Inter weight 600 com tracking wider (2-4px). Mono fica reservado pra contextos muito específicos (raro).
+
+### Convenções editoriais
+
+5. **Pontuação como ornamento**: ponto final / interrogação em `RED`, peso 900. Tamanho desproporcional permitido.
+6. **Headlines em Fraunces 800-900**, leading apertado (0.86-0.92), tracking negativo (-0.035 a -0.045em).
+7. **Capa**: BANCA + ANO em Fraunces 900 ~190-200px (maior que tudo), pergunta menor (Fraunces 700, ~56-60px).
+8. **Citações**: aspas tipográficas `"` em tamanho monumental (300px+) em `RED`.
+9. **Drop cap**: primeira letra em Fraunces 900 + `RED` no parágrafo de abertura.
+10. **Assinatura Caveat**: rotação leve (-2 a -4°) em `GOLD` ou `RED`. **Só na CTA** ("Feito por aprovados.") — NÃO duplicar na capa pra não competir com o header.
+11. **Sem emoji, sem ícones decorativos.** O neurônio (logo) é o único símbolo.
+12. **Sem cantos arredondados** em imagens (ou raio máximo 4px).
+13. **Imagens com `aspect-ratio: cover`**, sem máscaras suaves.
 
 ## Render de cards Anki
 
