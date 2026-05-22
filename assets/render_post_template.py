@@ -765,39 +765,76 @@ def slide_manejo():
     img.save(f"{OUT}/slide_8.png", quality=95)
 
 # ============================================================
-# SLIDE 9 — CTA (NAVY)
+# SLIDE 9 — CTA (NAVY) — closing editorial
 # ============================================================
 def slide_cta():
     img = bg_navy()
     img = draw_header(img, dark=True)
     d = ImageDraw.Draw(img)
 
-    # "Feito por aprovados" em Caveat RED, rotação leve
-    f_caveat = FC(180, 600)
-    cv_layer = Image.new("RGBA", (W, 400), (0, 0, 0, 0))
+    # ====================================
+    # "Feito por aprovados." Caveat gigante, centralizada, rotação -3°
+    # ====================================
+    f_caveat = FC(210, 700)
+    # Renderiza em layer pra rotacionar
+    cv_layer = Image.new("RGBA", (W, 500), (0, 0, 0, 0))
     cv_d = ImageDraw.Draw(cv_layer)
-    cv_d.text((50, 50), "Feito por", font=f_caveat, fill=RED)
-    cv_d.text((50, 200), "aprovados.", font=f_caveat, fill=RED)
-    cv_layer = cv_layer.rotate(-2.5, resample=Image.BICUBIC, expand=False)
+
+    # Linha 1: "Feito por"
+    l1 = "Feito por"
+    bb1 = cv_d.textbbox((0, 0), l1, font=f_caveat)
+    l1w = bb1[2] - bb1[0]
+    cv_d.text(((W - l1w) // 2, 0), l1, font=f_caveat, fill=RED)
+
+    # Linha 2: "aprovados."
+    l2 = "aprovados."
+    bb2 = cv_d.textbbox((0, 0), l2, font=f_caveat)
+    l2w = bb2[2] - bb2[0]
+    cv_d.text(((W - l2w) // 2, 180), l2, font=f_caveat, fill=RED)
+
+    cv_layer = cv_layer.rotate(-3, resample=Image.BICUBIC, expand=False)
     rgba = img.convert("RGBA")
-    rgba.alpha_composite(cv_layer, (10, 440))
+    rgba.alpha_composite(cv_layer, (0, 380))
     img = rgba.convert("RGB")
     d = ImageDraw.Draw(img)
 
-    # Linha
-    d.line([(70, 980), (W - 70, 980)], fill=(180, 180, 175), width=1)
+    # ====================================
+    # Linha sutil gold + subtítulo italic Fraunces
+    # ====================================
+    line_y = 950
+    line_w = 200
+    d.line([(W//2 - line_w, line_y), (W//2 + line_w, line_y)], fill=GOLD, width=2)
 
-    # Stats em Inter
+    # Subtítulo italic Fraunces 400 gold — "fechamento editorial"
+    f_sub = FF(36, 400, soft=20)
+    sub = "Residência médica, sem rodeio."
+    sw = text_width(d, sub, f_sub)
+    d.text(((W - sw) // 2, line_y + 30), sub, font=f_sub, fill=CREAM)
+
+    # ====================================
+    # Stats em Inter 500
+    # ====================================
     f_stats = FI(28, 500)
-    stats = "+19k flashcards · +700 aprovados · link na bio"
-    sw = text_width(d, stats, f_stats)
-    d.text(((W - sw) // 2, 1030), stats, font=f_stats, fill=CREAM)
+    stats = "+19k flashcards   ·   +700 aprovados"
+    ssw = text_width(d, stats, f_stats)
+    d.text(((W - ssw) // 2, line_y + 110), stats, font=f_stats, fill=(170, 175, 180))
 
-    # URL em mono
-    f_url = FM(22, 500)
-    url = "medproflashcards.com.br/links"
+    # ====================================
+    # URL em mono GOLD (sem /links)
+    # ====================================
+    f_url = FM(26, 600)
+    url = "medproflashcards.com.br"
     uw = text_width(d, url, f_url, tracking=3)
-    draw_text(d, ((W - uw) // 2, 1140), url, f_url, GOLD, tracking=3)
+    draw_text(d, ((W - uw) // 2, line_y + 180), url, f_url, GOLD, tracking=3)
+
+    # ====================================
+    # Microcopy abaixo da URL
+    # ====================================
+    f_micro = FI(20, 500)
+    micro = "LINK NA BIO"
+    mw = text_width(d, micro, f_micro, tracking=4)
+    draw_text(d, ((W - mw) // 2, line_y + 230),
+              micro, f_micro, (140, 150, 160), tracking=4)
 
     img.save(f"{OUT}/slide_9.png", quality=95)
 
