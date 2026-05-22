@@ -167,9 +167,15 @@ Já tá corrigido no `render_stories_template.py`.
 - [assets/render_stories_template.py](assets/render_stories_template.py) — renderer 6 stories 1080×1920
 - [assets/render_anki_template.py](assets/render_anki_template.py) — renderer cards Anki
 
-## Exemplos de uso real
+## Template canônico — Einstein 2026 Q17
 
-- USP-SP 2023 Q03 (abdome agudo perfurativo) — primeiro template
-- UNIFESP 2026 Q33 (abscesso pós-CCE + Pseudomonas MDR) — adaptado com stories
+**Use sempre como referência** (`Posts/carrossel_einstein2026_q17/`):
+- Capa BBW-style com BANCA + ANO gigantes
+- Header logo + `@MedProFlashcards` em mono (todos os slides)
+- Slides Anki estilo card editorial com badge "FLASHCARD MEDPRO" + cloze inline + botões De novo/Difícil/Bom/Fácil
+- Hook navy puro + CTA editorial minimalista (URL como headline)
+- Sem eyebrows, sem labels A/B, sem JBMono fora de handle/folio/badge
 
-Detalhes em [examples/README.md](examples/README.md).
+Os 2 posts anteriores (USP 2023 Q03, UNIFESP 2026 Q33) usavam paleta/fontes antigas e **não são mais referência ativa** — só histórico.
+
+Detalhes completos em [examples/README.md](examples/README.md).

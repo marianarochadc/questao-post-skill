@@ -1,50 +1,74 @@
-# Exemplos
+# Exemplos de posts
 
-## 1. USP-SP 2023 Q03 — Abdome agudo perfurativo (template original)
+## 🎯 Modelo canônico — Einstein 2026 Q17
 
-Caso: paciente jovem com dor abdominal súbita, sinal de Jobert+, TC com pneumoperitônio.
+**Caso**: Abdome agudo perfurativo (úlcera péptica por binge drinking + choque pós-TC).
+**Gabarito**: A (laparotomia exploradora) — pegadinha clássica vs. pancreatite.
+**Pasta**: `Posts/carrossel_einstein2026_q17/`
 
-**Slides usados**: todos os 9.
-- Capa: grade 2×2 com 4 TCs axiais (A, B, C, D)
-- Caso: 6 blocos
-- Hook: "Saberia responder agora?" em fundo navy
-- Anki imagem: pneumoperitônio
-- Anki conexão: causas de abdome perfurativo
-- Anki extra: sinal de Jobert
-- Diagnóstico: pneumoperitônio + 3 bullets (UC perfurada / Apendicite / Trauma)
-- Manejo: 5 passos (ressuscitação → laparotomia)
-- CTA
+### Por que este é o template canônico
 
-**Pasta**: `/Users/marianarocha/Documents/Claude/MedPro Flashcards/Instagram/Posts/carrossel_usp2023/q03_abdome_perfurativo/`
+Foi o primeiro post a fechar **todo o sistema visual** definitivo:
 
-## 2. UNIFESP 2026 Q33 — Abscesso pós-CCE + Pseudomonas MDR
+1. **Capa estilo BBW**: "EINSTEIN 2026:" gigante (Fraunces 900, ~195px, preto + dois pontos vermelhos) + pergunta menor (Fraunces 700) + ponto interrogação RED gigante + grid 2 imagens lado a lado (sem labels A/B, só conteúdo)
+2. **Header padronizado**: logo grande à esquerda + `@MedProFlashcards` em JetBrains Mono à direita, sem linha divisória — em TODOS os slides
+3. **Sem eyebrows** em lugar nenhum (regra dura)
+4. **Slides Anki em estilo card editorial**: fundo cream com textura paper → card off-white com sombra → card branco interno com border NAVY 2px + badge "FLASHCARD MEDPRO" flutuante + pergunta Arial com cloze inline + extra italic + imagem opcional + **botões De novo/Difícil/Bom/Fácil sempre presentes** + footer "Card curto. Resposta cirúrgica." + folio mono
+5. **Diagnóstico + Manejo** em fundo off com textura
+6. **Hook navy puro** sem textura (preserva tom da paleta)
+7. **CTA editorial minimalista** (slide 9): lead reflexivo + URL como headline + prova social sutil + Caveat signature
 
-Caso: homem 56a, 10 dias internado pós-CCE, abscesso subfrênico, cultura com Pseudomonas resistente a vários ATBs.
+### Estrutura dos 9 slides
 
-**Slides do carrossel** (9 slides):
-- Capa: 1 imagem grande da cultura/antibiograma (única imagem da questão)
-- Caso: 6 blocos com história, cirurgia, manipulação de dreno
-- Anki imagem: classificação do germe (Pseudomonas MDR)
-- Anki conexão: cobertura empírica (pipe-tazo OU meropenem)
-- Anki extra: infusão prolongada (T>CIM)
-- Diagnóstico: ISC subfrênica + 3 bullets (IRAS / MDR / NÃO é ESBL)
-- Manejo: 5 passos
-- CTA
+| # | Slide | Background | Função |
+|---|-------|-----------|--------|
+| 1 | Capa | cream + textura | Brand gigante + pergunta + grid 2 TCs |
+| 2 | O caso | off + textura | 5 blocos com labels GOLD |
+| 3 | Hook | navy puro | "Saberia responder agora?" + aspas RED gigantes |
+| 4 | Anki achado | cream com card off + textura | Pergunta + imagem + cloze "Pneumoperitônio." sublinhada |
+| 5 | Anki causa | cream com card off + textura | Pergunta + cloze "úlcera péptica perfurada" sublinhada |
+| 6 | Anki extra (DDx) | cream com card off + textura | Pergunta + cloze "síndrome de Boerhaave" sublinhada |
+| 7 | Diagnóstico | off + textura | Título grande + TC + 3 bullets gold (keyword + subtexto) |
+| 8 | Manejo | off + textura | 5 itens numerados (gold + Inter weight 700 + body Inter) |
+| 9 | CTA | navy puro | Lead reflexivo + URL editorial + prova social + Caveat sig |
 
-**Stories** (6 stories): versão enxuta do mesmo conteúdo.
+### Configurações finais aprovadas
 
-**Pasta**: `/Users/marianarocha/Documents/Claude/MedPro Flashcards/Instagram/Posts/carrossel_unifesp2026_q33/`
+- Canvas: **1080×1440** (3:4 orgânico)
+- Paleta: navy `#0F2340` · cream `#EFE9D9` · off `#FAFAF7` · red `#C9352B` · gold `#C9A961` · cloze `#1F00FF`
+- Fontes: **Fraunces** (headlines), **Inter** (corpo), **Arial** (dentro dos cards Anki), **Caveat** (assinatura), **JetBrains Mono** (handle/folio/badge apenas)
+- Header: logo 140px + handle JBMono 32px (padrão em todos os slides)
+- Textura paper: blend 40-42% em fundos claros, sem textura no navy
+- Cards Anki: arial 32 (pergunta) + 22 (extra italic), cloze azul bold sublinhado, botões anki sempre presentes
 
-### Lições aprendidas dessa adaptação
+---
 
-1. **Quando só tem 1 imagem na questão**, a capa muda — não usa grade 2×2, usa imagem grande centralizada com label externo.
-2. **Cultura/antibiograma é texto-imagem**: precisa estar BEM legível, então escala pra ocupar quase toda a tela disponível.
-3. **Stories precisam de `resize()` ao invés de `thumbnail()`** se a imagem original é pequena — caso contrário fica com muito espaço branco.
-4. **Helvetica e Playfair não têm `→`**: precisei substituir por `:` em vários lugares.
-5. **CTA gigante (FP 180)** estoura a largura com palavra longa tipo "Compartilha." — reduzir pra FP 140.
+## Outros posts produzidos antes do template fechar
 
-## 3. Próximas questões pra adaptar
+### USP-SP 2023 Q03 — Abdome agudo perfurativo
 
-Lista de questões da UNIFESP 2026 que valem post (Acesso Direto):
-- Q33 — Abscesso pós-CCE / Pseudomonas MDR ✅
-- (adicione aqui as próximas)
+Primeira tentativa do template. **Não usar como referência ativa** — o design system mudou completamente. Está mantido apenas como histórico.
+
+**Pasta**: `Posts/carrossel_usp2023/q03_abdome_perfurativo/`
+
+### UNIFESP 2026 Q33 — Abscesso pós-CCE + Pseudomonas MDR
+
+Segunda iteração, ainda com paleta antiga (Playfair + DM Sans + papel aquarela + neurônio). Tem versão Stories. **Não usar como referência ativa.**
+
+**Pasta**: `Posts/carrossel_unifesp2026_q33/`
+
+---
+
+## Como aplicar o template em uma questão nova
+
+1. Copiar `~/.claude/skills/questão-post/assets/render_post_template.py` pra pasta nova
+2. Copiar `~/.claude/skills/questão-post/assets/render_anki_template.py` pra pasta nova
+3. Trocar `BASE` no topo pra apontar pra pasta da questão
+4. Adaptar:
+   - `slide_capa()`: banca, ano, pergunta, imagens
+   - `slide_caso()`: blocos com paciente/história/exame/lab
+   - `slide_4/5/6()`: 3 cards Anki (cloze + extra + imagem opcional)
+   - `slide_dx()`: título + imagem + 3 bullets
+   - `slide_manejo()`: 5 itens numerados
+5. Slides 3 (hook) e 9 (CTA) raramente precisam de mudança
+6. Rodar `render_anki_prints.py` primeiro, depois `render_q##.py`
