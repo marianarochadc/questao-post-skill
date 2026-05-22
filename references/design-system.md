@@ -134,7 +134,7 @@ def apply_paper(canvas, paper_path, dark=False, opacity=0.4):
 1. **NUNCA usar eyebrow.** Proibido: `§ NN — TÍTULO`, bolinha vermelha + texto kicker, "QUESTÃO 17" em letterspacing wide no topo, etc. O header com logo + handle já assina visualmente. Eyebrow é ruído.
 2. **Header padronizado em TODOS os slides**: logo MedPro à esquerda (y=80, altura ~58px) + `@medproflashcards` Inter 600 à direita + linha divisória sutil em y=165. Vale pra capa, hook navy, cards Anki, manejo, CTA — todos.
 3. **Sem labels A/B/C/D** sobre imagens quando são cortes sequenciais. Use apenas quando a questão pede comparação explícita.
-4. **Sem JetBrains Mono.** Quando precisar de "rótulo técnico" estilo mono, use Inter weight 600 com tracking wider (2-4px). Mono fica reservado pra contextos muito específicos (raro).
+4. **JetBrains Mono** é permitida APENAS em dois contextos: (a) folio `PADRÃO MEDPRO / DIRETO AO PONTO` no rodapé dos cards Anki; (b) badge `FLASHCARD MEDPRO` flutuando sobre o card interno dos slides Anki. Em qualquer outro lugar, usa Inter weight 600 com tracking wider.
 
 ### Convenções editoriais
 

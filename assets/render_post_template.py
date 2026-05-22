@@ -325,62 +325,255 @@ def slide_hook():
 # Card Anki render — fundo branco, pergunta preta, resposta cloze azul
 # Uma palavra-chave sublinhada na resposta
 # ============================================================
-def slide_anki_card(slide_num, eyebrow_text, pergunta, resposta, palavra_sublinhada,
-                    tc_image=None, slide_filename="slide_anki.png"):
-    """Renderiza slide de card Anki "raw" estilo screenshot.
-    Header com logo + @medproflashcards sempre presente.
-    Sem eyebrow (REGRA DURA).
+# ============================================================
+# Card Anki estilo /medpro-carrossel
+# Fundo cream + card off com sombra + card branco com border navy +
+# badge "Flashcard MedPro" flutuante + Helvetica + cloze azul inline
+# ============================================================
+HELVETICA = "/System/Library/Fonts/Helvetica.ttc"
+
+def FH(size, style="regular"):
+    """Helvetica (system) — pergunta dentro do card."""
+    idx = {"regular": 0, "bold": 1, "italic": 2}[style]
+    try:
+        return ImageFont.truetype(HELVETICA, size, index=idx)
+    except Exception:
+        fb = {"regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
+              "bold":    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+              "italic":  "/System/Library/Fonts/Supplemental/Arial Italic.ttf"}[style]
+        return ImageFont.truetype(fb, size)
+
+def draw_cloze_line(d, segments, y_baseline, font_q, font_cloze, center_x, max_w):
+    """Desenha uma linha com segmentos mistos (texto normal + cloze).
+    segments: lista de tuplas (texto, is_cloze, underlined).
+    Retorna (last_y, num_lines_drawn).
+
+    Faz wrap respeitando max_w. Centraliza cada linha.
     """
-    img = Image.new("RGB", (W, H), OFF)
-    img = draw_header(img, dark=False)
+    # Quebra cada segmento em palavras mantendo o estilo
+    tokens = []  # [(word, is_cloze, underlined)]
+    for txt, is_cloze, ul in segments:
+        for w in txt.split(" "):
+            if w:
+                tokens.append((w, is_cloze, ul))
+
+    # Monta linhas respeitando max_w
+    lines = []  # [[(word, is_cloze, ul, w_pixels), ...], ...]
+    cur_line = []
+    cur_w = 0
+    space_w = d.textlength(" ", font=font_q)
+    for word, is_cloze, ul in tokens:
+        f = font_cloze if is_cloze else font_q
+        ww = d.textlength(word, font=f)
+        sep = space_w if cur_line else 0
+        if cur_w + sep + ww > max_w and cur_line:
+            lines.append(cur_line)
+            cur_line = [(word, is_cloze, ul, ww)]
+            cur_w = ww
+        else:
+            cur_line.append((word, is_cloze, ul, ww))
+            cur_w += sep + ww
+    if cur_line:
+        lines.append(cur_line)
+
+    # Renderiza cada linha centralizada
+    line_h = int(font_q.size * 1.45)
+    for li, line in enumerate(lines):
+        total_w = sum(w for _,_,_,w in line) + space_w * (len(line) - 1)
+        x = center_x - total_w // 2
+        ly = y_baseline + li * line_h
+        for word, is_cloze, ul, ww in line:
+            f = font_cloze if is_cloze else font_q
+            color = CLOZE_BLUE if is_cloze else BLACK
+            d.text((x, ly), word, font=f, fill=color)
+            if ul:
+                ul_y = ly + f.size + 4
+                d.line([(x, ul_y), (x + ww, ul_y)], fill=CLOZE_BLUE, width=3)
+            x += ww + space_w
+    return y_baseline + len(lines) * line_h, len(lines)
+
+def slide_anki_card(headline, pergunta_segments, extra=None,
+                    tc_image=None, slide_filename="slide_anki.png"):
+    """Slide de card Anki estilo /medpro-carrossel:
+    - Fundo cream
+    - Card off off-white com sombra + border sutil
+    - Headline Fraunces 96 NAVY
+    - Card branco interno com border navy 2px + badge "Flashcard MedPro"
+    - Pergunta Helvetica 32 com cloze azul (sublinhada opcional) inline
+    - Extra italic cinza opcional
+    - Imagem opcional
+    - Footer: "Card curto. Resposta cirúrgica." + folio mono
+    """
+    # Fundo cream
+    img = bg_cream()
+
+    # Card off (inset 48) com sombra
+    inset = 48
+    card_x = inset
+    card_y = inset
+    card_w = W - inset * 2
+    card_h = H - inset * 2
+
+    # Sombra (gaussian blur abaixo do card)
+    shadow_pad = 50
+    shadow_layer = Image.new("RGBA", (card_w + shadow_pad*2, card_h + shadow_pad*2), (0,0,0,0))
+    sd = ImageDraw.Draw(shadow_layer)
+    sd.rounded_rectangle([shadow_pad, shadow_pad + 12,
+                          shadow_pad + card_w, shadow_pad + card_h + 12],
+                         radius=28, fill=(15, 35, 64, 50))
+    shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(20))
+    rgba = img.convert("RGBA")
+    rgba.alpha_composite(shadow_layer, (card_x - shadow_pad, card_y - shadow_pad))
+    img = rgba.convert("RGB")
+
+    # Card off arredondado
+    card_layer = Image.new("RGBA", (card_w, card_h), (0,0,0,0))
+    cd = ImageDraw.Draw(card_layer)
+    cd.rounded_rectangle([0, 0, card_w, card_h], radius=28, fill=OFF + (255,),
+                         outline=(15, 35, 64, 26), width=1)
+    rgba = img.convert("RGBA")
+    rgba.alpha_composite(card_layer, (card_x, card_y))
+    img = rgba.convert("RGB")
+
     d = ImageDraw.Draw(img)
 
-    # Pergunta — Inter 500-600
-    f_q = FI(44, 600)
-    q_lines = wrap(d, pergunta, f_q, W - 200)
-    y = 280 if tc_image else 420
-    for ln in q_lines:
-        lw = text_width(d, ln, f_q)
-        d.text(((W - lw) // 2, y), ln, font=f_q, fill=BLACK)
-        y += 70
+    # Headline Fraunces NAVY 96 — padding generoso no topo
+    f_head = FF(96, 900, soft=20)
+    head_x = card_x + 52
+    head_y = card_y + 60
+    head_lines = wrap(d, headline, f_head, card_w - 104)
+    for ln in head_lines:
+        d.text((head_x, head_y), ln, font=f_head, fill=NAVY)
+        head_y += int(96 * 0.92)
 
-    # Imagem opcional (TC)
+    # Card flashcard interno (border navy 2px, bg branco)
+    # JSX: margin "48px 40px 0", padding "32px 40px", borderRadius 18
+    inner_margin_x = card_x + 40
+    inner_margin_top = head_y + 24
+    inner_w = card_w - 80
+    inner_padding_x = 40
+    inner_padding_y = 32
+
+    # Calcular altura do conteúdo interno antes de desenhar a borda
+    # Pergunta Helvetica 32, line-height 1.45
+    f_q = FH(32, "regular")
+    f_cloze = FH(32, "bold")
+    f_extra = FH(22, "italic")
+
+    # Simular dry-run pra medir altura
+    inner_content_max_w = inner_w - inner_padding_x * 2
+    dummy = Image.new("RGB", (10, 10))
+    dd = ImageDraw.Draw(dummy)
+    # Conta linhas da pergunta
+    tokens = []
+    for txt, is_cloze, ul in pergunta_segments:
+        for w in txt.split(" "):
+            if w: tokens.append((w, is_cloze, ul))
+    cur_w, line_count = 0, 1
+    space_w = dd.textlength(" ", font=f_q)
+    for word, is_cloze, ul in tokens:
+        f = f_cloze if is_cloze else f_q
+        ww = dd.textlength(word, font=f)
+        sep = space_w if cur_w > 0 else 0
+        if cur_w + sep + ww > inner_content_max_w and cur_w > 0:
+            line_count += 1
+            cur_w = ww
+        else:
+            cur_w += sep + ww
+    pergunta_h = line_count * int(32 * 1.45)
+
+    extra_h = 0
+    if extra:
+        extra_lines = wrap(dd, extra, f_extra, inner_content_max_w)
+        extra_h = 18 + len(extra_lines) * int(22 * 1.4)
+
+    img_h_render = 0
+    if tc_image:
+        tc_meta = Image.open(tc_image)
+        tc_w_target = inner_content_max_w
+        ratio = tc_w_target / tc_meta.width
+        img_h_render = int(tc_meta.height * ratio) + 24
+
+    inner_content_h = pergunta_h + extra_h + img_h_render
+    inner_h = inner_padding_y * 2 + inner_content_h
+
+    # Border navy 2px + bg branco
+    d.rounded_rectangle([inner_margin_x, inner_margin_top,
+                         inner_margin_x + inner_w, inner_margin_top + inner_h],
+                        radius=18, fill=(255, 255, 255), outline=NAVY, width=2)
+
+    # Badge "Flashcard MedPro" flutuante (top: -12, left: 32 do JSX)
+    badge_x = inner_margin_x + 32
+    badge_y = inner_margin_top - 12
+    f_badge = FM(15, 600)
+    badge_pad_x = 12
+    bb1 = dd.textbbox((0, 0), "FLASHCARD", font=f_badge)
+    bb2 = dd.textbbox((0, 0), "MEDPRO", font=f_badge)
+    # Tracking 0.32em (~5px)
+    badge_track = 5
+    w1 = text_width(dd, "FLASHCARD", f_badge, tracking=badge_track)
+    w2 = text_width(dd, "MEDPRO", f_badge, tracking=badge_track)
+    badge_total_w = w1 + 10 + w2  # gap 10 entre eles
+    # Fundo branco do badge
+    badge_h = 24
+    d.rectangle([badge_x - badge_pad_x, badge_y - 2,
+                 badge_x + badge_total_w + badge_pad_x, badge_y + badge_h],
+                fill=(255, 255, 255))
+    draw_text(d, (badge_x, badge_y), "FLASHCARD", f_badge, RED, tracking=badge_track)
+    draw_text(d, (badge_x + w1 + 10, badge_y), "MEDPRO", f_badge, NAVY, tracking=badge_track)
+
+    # Pergunta + cloze
+    pergunta_y = inner_margin_top + inner_padding_y
+    center_x = inner_margin_x + inner_w // 2
+    draw_cloze_line(d, pergunta_segments, pergunta_y, f_q, f_cloze,
+                    center_x, inner_content_max_w)
+
+    # Extra italic cinza (opcional)
+    extra_y = pergunta_y + pergunta_h
+    if extra:
+        extra_y += 18
+        lines = wrap(d, extra, f_extra, inner_content_max_w)
+        for ln in lines:
+            lw = d.textlength(ln, font=f_extra)
+            d.text((center_x - lw // 2, extra_y), ln, font=f_extra, fill=(85, 85, 85))
+            extra_y += int(22 * 1.4)
+
+    # Imagem opcional dentro do card
     if tc_image:
         tc = Image.open(tc_image).convert("RGB")
-        img_h_target = 480
-        ratio_tc = img_h_target / tc.height
-        new_w = int(tc.width * ratio_tc)
-        if new_w > W - 240:
-            new_w = W - 240
-            ratio_tc = new_w / tc.width
-            img_h_target = int(tc.height * ratio_tc)
-        tc = tc.resize((new_w, img_h_target), Image.LANCZOS)
-        y += 30
-        img.paste(tc, ((W - new_w) // 2, y))
-        y += img_h_target + 60
+        tc_w_target = inner_content_max_w
+        ratio = tc_w_target / tc.width
+        tc_h_render = int(tc.height * ratio)
+        tc = tc.resize((tc_w_target, tc_h_render), Image.LANCZOS)
+        img_y = extra_y + (24 if extra else 24)
+        if not extra:
+            img_y = pergunta_y + pergunta_h + 24
+        img.paste(tc, (inner_margin_x + inner_padding_x, img_y))
 
-    # Resposta — Inter 700 AZUL CLOZE
-    f_r = FI(54, 700)
-    r_lines = wrap(d, resposta, f_r, W - 200)
-    if not tc_image:
-        y += 30
-    for ln in r_lines:
-        lw = text_width(d, ln, f_r)
-        x = (W - lw) // 2
-        d.text((x, y), ln, font=f_r, fill=CLOZE_BLUE)
+    # Footer: "Card curto. Resposta cirúrgica." + folio
+    # JSX: padding "0 52px 36px", flex justify-content space-between
+    d = ImageDraw.Draw(img)
+    footer_y = card_y + card_h - 36 - 60
+    f_left  = FF(28, 700, soft=20)
+    f_left_em = FF(28, 400, soft=20)
+    # "Card curto. " navy bold + "Resposta cirúrgica." red italic
+    d.text((card_x + 52, footer_y), "Card curto.", font=f_left, fill=NAVY)
+    cc_w = d.textlength("Card curto. ", font=f_left)
+    d.text((card_x + 52 + cc_w, footer_y), "Resposta cirúrgica.", font=f_left_em, fill=RED)
 
-        # Sublinhar palavra-chave se aparecer nessa linha
-        if palavra_sublinhada and palavra_sublinhada in ln:
-            # achar posição da palavra
-            before = ln.split(palavra_sublinhada, 1)[0]
-            before_w = text_width(d, before, f_r)
-            word_w = text_width(d, palavra_sublinhada, f_r)
-            ul_y = y + 60
-            d.line([(x + before_w, ul_y), (x + before_w + word_w, ul_y)],
-                   fill=CLOZE_BLUE, width=4)
-        y += 78
+    # Folio direita (JSX: JetBrains Mono 20, letter-spacing 0.24em, navy 55%)
+    f_folio = FM(20, 500)
+    fol_color = (15, 35, 64, 140)  # navy 55%
+    # PIL não suporta alpha em fill direto pra draw — vou usar uma cor cinza-azulada
+    fol_color = (105, 113, 130)
+    fol_track = 4
+    w_a = text_width(d, "PADRÃO MEDPRO", f_folio, tracking=fol_track)
+    w_b = text_width(d, "DIRETO AO PONTO", f_folio, tracking=fol_track)
+    draw_text(d, (card_x + card_w - 52 - w_a, footer_y),
+              "PADRÃO MEDPRO", f_folio, fol_color, tracking=fol_track)
+    draw_text(d, (card_x + card_w - 52 - w_b, footer_y + 30),
+              "DIRETO AO PONTO", f_folio, fol_color, tracking=fol_track)
 
-    # Sem folio, sem logo, sem ornamento — é card "raw"
     img.save(f"{OUT}/{slide_filename}", quality=95)
 
 # ============================================================
@@ -388,11 +581,12 @@ def slide_anki_card(slide_num, eyebrow_text, pergunta, resposta, palavra_sublinh
 # ============================================================
 def slide_4():
     slide_anki_card(
-        slide_num=4,
-        eyebrow_text="§ 04 — Card",
-        pergunta="TC de abdome com ar livre subdiafragmático. Achado?",
-        resposta="Pneumoperitônio.",
-        palavra_sublinhada="Pneumoperitônio",
+        headline="O achado.",
+        pergunta_segments=[
+            ("TC de abdome com ar livre subdiafragmático: ", False, False),
+            ("Pneumoperitônio.", True, True),
+        ],
+        extra="Perfuração de víscera oca até prova em contrário.",
         tc_image=TC_SRC,
         slide_filename="slide_4.png",
     )
@@ -402,25 +596,27 @@ def slide_4():
 # ============================================================
 def slide_5():
     slide_anki_card(
-        slide_num=5,
-        eyebrow_text="§ 05 — Card",
-        pergunta="Jovem, binge drinking, dor epigástrica súbita. Causa mais provável?",
-        resposta="Úlcera péptica perfurada.",
-        palavra_sublinhada="perfurada",
+        headline="A causa.",
+        pergunta_segments=[
+            ("Jovem + binge drinking + dor epigástrica súbita: ", False, False),
+            ("úlcera péptica perfurada.", True, True),
+        ],
+        extra="Álcool em altas doses lesa a mucosa e inibe prostaglandinas protetoras.",
         tc_image=None,
         slide_filename="slide_5.png",
     )
 
 # ============================================================
-# SLIDE 6 — EXTRA Anki: Boerhaave
+# SLIDE 6 — EXTRA Anki: Boerhaave (DDx)
 # ============================================================
 def slide_6():
     slide_anki_card(
-        slide_num=6,
-        eyebrow_text="§ 06 — Card · DDx",
-        pergunta="Vômitos forçados, dor torácica baixa, choque. DDx?",
-        resposta="Síndrome de Boerhaave.",
-        palavra_sublinhada="Boerhaave",
+        headline="Outro DDx.",
+        pergunta_segments=[
+            ("Vômitos forçados + dor torácica baixa + choque: ", False, False),
+            ("síndrome de Boerhaave.", True, True),
+        ],
+        extra="Ruptura esofágica espontânea por vômitos. Tríade de Mackler.",
         tc_image=None,
         slide_filename="slide_6.png",
     )
