@@ -1,152 +1,180 @@
-# Design System — @medproflashcards
+# Design System — MedPro Flashcards (editorial premium)
 
-Sistema visual canônico dos posts de questão. Definido em produção no template `carrossel_usp2023/render_q03.py`.
+Sistema visual alinhado à skill `/medpro-carrossel`. Inspiração: Bloomberg Businessweek, Osler, NYT Magazine, Granta. **Não é "infoproduto" — é editorial.**
 
 ## Canvas
 
 | Formato | Dimensões | Uso |
 |---------|-----------|-----|
-| Post Instagram | 1080×1350 | Carrossel (até 10 slides) |
+| Post Instagram (3:4 orgânico) | **1080×1440** | Carrossel padrão |
 | Stories | 1080×1920 | Stories sequenciais |
+| Anúncio 4:5 | 1080×1350 | Só sob pedido |
 
-**Stories safe zones**: o IG corta ~250-280px no topo (foto+nome) e ~330-380px no rodapé (reactions + DM). Trabalhe entre `y=280` e `y=1540`.
+**Stories safe zones**: y=280 até y=1540.
 
-## Paleta
+## Paleta (RESTRITA — sem desvios)
 
 ```python
-PAPER       = (253, 253, 252)   # fundo papel claro
-PAPER_DARK  = (240, 240, 238)   # variação mais escura
-NAVY        = (13, 27, 42)      # texto principal, fundo escuro
-DEEP_BLUE   = (27, 58, 92)      # variação navy
-BRAND_BLUE  = (91, 164, 207)    # accent, labels, "cloze" em destaque
-LIGHT_BLUE  = (135, 206, 235)   # accent claro, linhas em fundo navy
-INK_DARK    = (26, 26, 26)      # body text
-INK_MED     = (74, 74, 74)      # body text secundário
-ANKI_BG     = (249, 249, 249)   # = #f9f9f9 (fundo CSS real dos cards Anki)
+NAVY        = (15, 35, 64)      # #0F2340 — escuro principal, fundo dominante
+OFF         = (250, 250, 247)   # #FAFAF7 — off-white neutro
+CREAM       = (239, 233, 217)   # #EFE9D9 — papel / fundo claro alternativo
+RED         = (201, 53, 43)     # #C9352B — acento, USAR COM ESCASSEZ (pontuação)
+GOLD        = (201, 169, 97)    # #C9A961 — tagline, destaques editoriais
+BLACK       = (10, 10, 10)      # #0A0A0A — extremo escuro
+CLOZE_BLUE  = (31, 0, 255)      # #1F00FF — cloze nos cards Anki
 ```
+
+**NUNCA INVENTAR COR.** Se não tá nessa lista, não usa.
 
 ## Tipografia
 
 | Fonte | Arquivo | Uso |
 |-------|---------|-----|
-| Playfair Display Bold (variable) | `fonts/PlayfairDisplay-Bold.ttf` | títulos, números, hooks |
-| DM Sans (variable) | `fonts/DMSans-Regular.ttf` | labels, body, handle |
-| Helvetica (sistema) | `/System/Library/Fonts/Helvetica.ttc` | apenas dentro dos cards Anki |
+| **Fraunces** (variable: opsz, wght, SOFT, WONK) | `assets/fonts/Fraunces[SOFT,WONK,opsz,wght].ttf` | Headlines, números editoriais. Weight 700-900. `SOFT=20-30` |
+| **Inter** (variable: opsz, wght) | `assets/fonts/Inter[opsz,wght].ttf` | Corpo, labels, UI. Weight 400-700 |
+| **Caveat** (variable: wght) | `assets/fonts/Caveat[wght].ttf` | Assinatura "Feito por aprovados". Weight 600 |
+| **JetBrains Mono** (variable: wght) | `assets/fonts/JetBrainsMono[wght].ttf` | Eyebrows (`§ 02`), folio, contadores. Weight 400-500 |
 
-### Helpers padrão
+### Helpers padrão (Python/PIL)
 
 ```python
-def FP(size, weight=900):
-    """Playfair com peso variável (400-900)."""
-    f = ImageFont.truetype(PLAYFAIR_VAR, size)
+FONTS = os.path.expanduser("~/.claude/skills/questão-post/assets/fonts")
+
+def FF(size, weight=800, opsz=None, soft=30):
+    """Fraunces (headlines). Axes order: opsz, wght, SOFT, WONK."""
+    if opsz is None:
+        opsz = max(9, min(144, size // 2))
+    f = ImageFont.truetype(f"{FONTS}/Fraunces[SOFT,WONK,opsz,wght].ttf", size)
+    try: f.set_variation_by_axes([opsz, weight, soft, 0])
+    except: pass
+    return f
+
+def FI(size, weight=500, opsz=None):
+    """Inter (corpo). Axes: opsz, wght."""
+    if opsz is None:
+        opsz = max(14, min(32, size // 2))
+    f = ImageFont.truetype(f"{FONTS}/Inter[opsz,wght].ttf", size)
+    try: f.set_variation_by_axes([opsz, weight])
+    except: pass
+    return f
+
+def FC(size, weight=600):
+    """Caveat (assinatura). Axes: wght."""
+    f = ImageFont.truetype(f"{FONTS}/Caveat[wght].ttf", size)
     try: f.set_variation_by_axes([weight])
     except: pass
     return f
 
-def FS(size, weight=500, opsz=None):
-    """DM Sans com opsz + weight (400-900)."""
-    if opsz is None:
-        opsz = max(9, min(40, size // 3))
-    f = ImageFont.truetype(DMSANS_VAR, size)
-    try: f.set_variation_by_axes([opsz, weight])
+def FM(size, weight=500):
+    """JetBrains Mono (eyebrows/folio). Axes: wght."""
+    f = ImageFont.truetype(f"{FONTS}/JetBrainsMono[wght].ttf", size)
+    try: f.set_variation_by_axes([weight])
     except: pass
     return f
 ```
 
-### Tamanhos típicos
+### Tamanhos típicos (1080×1440)
 
 | Elemento | Tamanho | Peso | Fonte |
 |----------|---------|------|-------|
-| Brand capa ("USP-SP") | 150-170 | 900 | Playfair |
-| Ano | 96-120 | 900 | Playfair |
-| Título slide ("O caso.") | 108-140 | 900 | Playfair |
-| Subtítulo | 56-88 | 700-900 | Playfair |
-| Label categoria | 26-32 | 800 | DM Sans |
-| Body | 30-44 | 500-600 | Playfair ou DM Sans |
-| Handle / footer | 22-26 | 700 | DM Sans |
-| Hook (slide 3) | 80-100 | 900 | Playfair |
+| Headline gigante (capa) | 180-260 | 900 | Fraunces |
+| Headline médio (slide interno) | 110-150 | 800-900 | Fraunces |
+| Subtítulo | 56-88 | 700 | Fraunces |
+| Drop cap / numeral grande | 200-340 | 900 | Fraunces |
+| Eyebrow (`§ 02 — TESE`) | 18-26 | 500 | JetBrains Mono CAIXA-ALTA tracking 0.32em |
+| Body | 28-44 | 400-600 | Inter |
+| Label / micro | 18-26 | 600-700 | Inter |
+| Tagline "Feito por aprovados" | 80-120 | 600 | Caveat (rotação -2 a -3°) |
+| Folio / contador | 14-20 | 500 | JetBrains Mono |
+| Card Anki pergunta | 38-46 | 500-600 | Inter |
+| Card Anki resposta | 44-52 | 700 | Inter — **AZUL CLOZE #1F00FF** |
 
 ## Assets compartilhados
 
-Todos vivem fora da skill, no Mac da Mariana:
+Logos e textura ficam em `assets/brand/` da skill:
 
 ```python
-PAPER_SRC   = "/Users/marianarocha/Documents/Claude/MedPro Flashcards/Design/textura-de-papel-aquarela-ou-fundo-textura-sem-costura-pronto-para-o-azulejos_463999-10308.jpg-2.avif"
-BUTTONS_SRC = "/Users/marianarocha/Documents/Claude/MedPro Flashcards/Design/Botões anki.jpg"
-NEURON_SRC  = "/Users/marianarocha/Documents/Claude/MedPro Flashcards/Instagram/Posts antigos/questões/recriado/assets/neuron_outline.png"
+SKILL_BRAND = os.path.expanduser("~/.claude/skills/questão-post/assets/brand")
+LOGO_CREAM  = f"{SKILL_BRAND}/logo-cream.png"   # sobre navy
+LOGO_NAVY   = f"{SKILL_BRAND}/logo-navy.png"    # sobre cream/off
+PAPER_TEX   = f"{SKILL_BRAND}/paper.png"        # textura editorial
 ```
 
-- **Papel aquarela** (AVIF seamless): tiled como fundo do post, dá textura
-- **Neurônio outline**: tintado em NAVY ou BRAND_BLUE, aplicado com alpha baixa (~10%) como ornamento decorativo no canto sup-dir e inf-esq
-- **Botões Anki** (De novo / Difícil / Bom / Fácil): colados abaixo dos cards Anki nos slides centrais
+**Logo aparece SÓ na capa (slide 1) e no slide final (CTA).** Lâminas do meio NÃO carregam logo.
 
-## Layout / convenções
+## Textura de papel
 
-### Header (todo slide, com exceção da CTA navy)
-
-```
-M.  medpro          ← logo (Playfair "M." + DM Sans "medpro")
-─────────────────   ← linha y=115
-```
-
-**SEM** tags tipo "• CATEGORIA", "R1 ACESSO DIRETO", "QUESTÃO 33". Foi removido de todos os templates por ser redundante.
-
-### Footer
-
-```
-─────────────────   ← linha y=H-95
-   @medproflashcards
-```
-
-**SEM** numeração de slide. Só handle centrado.
-
-### Posicionamento
-
-- Títulos no topo: `y=140-150`
-- Body começa: `y=320-450` dependendo do slide
-- Distribua o conteúdo preenchendo TODO o canvas — evite "espaço morto" abaixo do título
-- Bullets / listas com bom espaçamento entre items (~`line_h * 1.6`)
-
-## Ornamentos
+- Aplicar em fundos sólidos com **blend modes**:
+  - Fundos claros (cream/off): `multiply` (subtrai luz)
+  - Fundos escuros (navy/black): `soft-light` (mantém luz mas dá grão)
+- Em PIL não tem soft-light nativo, mas dá pra simular:
 
 ```python
-def paste_neuron(canvas, pos, size, rot=0, alpha=0.10, tint=NAVY):
-    n = NEURON_OUTLINE.copy()
-    n = tint_rgba(n, tint)
-    n = n.resize(size, Image.LANCZOS)
-    if rot: n = n.rotate(rot, expand=True, resample=Image.BICUBIC)
-    n = set_alpha(n, alpha)
-    rgba = canvas.convert("RGBA")
-    rgba.alpha_composite(n, pos)
-    return rgba.convert("RGB")
-
-def bg_paper():
-    img = PAPER_TEX.copy()
-    img = paste_neuron(img, pos=(W - 400, -150), size=(700, 770), rot=-12, alpha=0.10, tint=NAVY)
-    img = paste_neuron(img, pos=(-200, H - 500), size=(540, 590), rot=165, alpha=0.08, tint=NAVY)
-    return img
-
-def bg_navy():
-    img = Image.new("RGB", (W, H), NAVY)
-    img = paste_neuron(img, pos=(W - 450, -180), size=(750, 820), rot=-18, alpha=0.14, tint=BRAND_BLUE)
-    img = paste_neuron(img, pos=(-180, H - 420), size=(500, 540), rot=150, alpha=0.10, tint=BRAND_BLUE)
-    return img
+def apply_paper(canvas, paper_path, dark=False, opacity=0.4):
+    paper = Image.open(paper_path).convert("RGBA")
+    paper = paper.resize(canvas.size, Image.LANCZOS)
+    if dark:
+        # soft-light fake: blend overlay com opacidade baixa
+        return Image.blend(canvas.convert("RGB"),
+                           Image.alpha_composite(canvas.convert("RGBA"), 
+                                                  Image.eval(paper, lambda v: int(v*0.4))).convert("RGB"),
+                           opacity*0.5)
+    else:
+        # multiply
+        p = paper.convert("RGB")
+        c = canvas.convert("RGB")
+        from PIL import ImageChops
+        return ImageChops.multiply(c, Image.eval(p, lambda v: int(v*0.6 + 255*0.4)))
 ```
 
-## Cantos arredondados (cards / imagens)
+## Regras editoriais (SEM EXCEÇÃO)
 
-```python
-mask = Image.new("L", (sw, sh), 0)
-ImageDraw.Draw(mask).rounded_rectangle([0, 0, sw, sh], radius=28, fill=255)
-src_rgba = src_img.convert("RGBA")
-src_rgba.putalpha(mask)
-img_canvas.alpha_composite(src_rgba, (cx, cy))
-```
+1. **Pontuação como ornamento**: ponto final / interrogação em `RED` ou `GOLD`, peso 900. Tamanho desproporcional permitido.
+2. **Eyebrow padrão**: `§ <NÚMERO> — <TIPO>` em JetBrains Mono, caixa alta, tracking 0.32em, em `RED` ou `GOLD`.
+3. **Folio (canto inferior direito)**: JetBrains Mono, `PADRÃO MEDPRO / DIRETO AO PONTO`. **NUNCA usar paginação `01/09`, `p. 02`** — o Instagram já mostra contagem nativa.
+4. **Headlines em Fraunces 800-900**, leading apertado (0.86-0.92), tracking negativo (-0.035 a -0.045em).
+5. **Citações**: aspas tipográficas `"` em tamanho monumental (300px+) em `RED`.
+6. **Drop cap**: primeira letra em Fraunces 900 + `RED` no parágrafo de abertura.
+7. **Carimbo (stamp)**: logo rotacionado 6-8°, opacidade 0.9-1.0.
+8. **Assinatura Caveat**: rotação leve (-2 a -3°) em `GOLD` ou `RED`.
+9. **Sem emoji, sem ícones decorativos.** O neurônio (logo) é o único símbolo.
+10. **Sem cantos arredondados** em imagens (ou raio máximo 4px).
+11. **Imagens com `aspect-ratio: cover`**, sem mascaras suaves.
 
-Use radius=28-32 pra imagens, radius=18-24 pra pills/badges.
+## Render de cards Anki
+
+Cards Anki são **deliberadamente raw** — parecem screenshot do app, não diagramação editorial:
+
+- **Fundo**: branco `#FFFFFF` ou off `#FAFAF7`. SEM paper texture, SEM ornamento, SEM logo.
+- **Pergunta**: Inter weight 500-600, preto `#0A0A0A`, centralizada.
+- **Resposta**: Inter weight 700, **AZUL CLOZE `#1F00FF`**, centralizada abaixo da pergunta.
+- **Sublinhado**: UMA palavra-chave da resposta sublinhada (a mais importante semanticamente). Se o card original já tem sublinhado, mantém o original.
+- **Polimento permitido** (sem alterar fato médico): capitalização, acentuação, pontuação, frase completa. Remover `&nbsp;`, `{{c1::…}}`.
+
+Detalhes completos em [anki-cards.md](anki-cards.md).
+
+## CTA final (slide N)
+
+- Fundo NAVY
+- Eyebrow JetBrains Mono em GOLD: `§ — MEDPROFLASHCARDS`
+- Tagline em Caveat: **"Feito por aprovados."** em `RED` (`#C9352B`), rotação -2°
+- Stats: `+19k flashcards · +700 aprovados · link na bio` em Inter 500
+- Link: `medproflashcards.com.br/links`
+
+## Combos cromáticos por slide
+
+| Slide | Fundo | Texto | Acento |
+|-------|-------|-------|--------|
+| Capa | CREAM ou NAVY | NAVY ou OFF | RED/GOLD na pontuação |
+| Caso | OFF | NAVY | GOLD nos labels |
+| Hook | NAVY | OFF | GOLD ou RED no destaque |
+| Anki card | OFF (branco) | BLACK | CLOZE_BLUE na resposta |
+| Diagnóstico | OFF | NAVY | RED na pontuação grande |
+| Manejo | OFF | NAVY | GOLD nos números (01, 02, 03) |
+| CTA | NAVY | OFF | GOLD eyebrow + RED tagline Caveat |
 
 ## Limitações conhecidas
 
-- **Helvetica e Playfair NÃO suportam** caracteres `→` `↑` `←` `↓`. Substitua por `:` ou palavra ("aumenta", "leva a").
-- **PIL thumbnail() só REDUZ** — não escala pra cima. Pra imagens pequenas em canvas grande, use `resize()` com cálculo de ratio.
-- **AVIF** precisa de `pillow-heif` ou abertura especial. Geralmente a textura papel tá em `.avif` e PIL abre direto se estiver instalado.
+- Fraunces/Inter/Caveat/JetBrains Mono são **fontes baixadas** — vivem em `~/.claude/skills/questão-post/assets/fonts/`.
+- Não há ícone setinha `→` na maioria delas — substitua por `:` ou palavra ("aumenta", "leva a").
+- Para escalar imagens pra cima (não só reduzir), use `resize()` com cálculo de ratio, não `thumbnail()`.

@@ -10,9 +10,20 @@ Skill pra adaptar uma questão de prova de residência médica em conteúdo visu
 ## O que essa skill faz
 
 Pega uma questão (texto + imagens) e gera:
-- **Carrossel Instagram** (1080×1350): 4 a 9 slides em formato portrait, design system "papel + Playfair + neurônio"
+- **Carrossel Instagram** (1080×1440, 3:4 orgânico): 4 a 9 slides em formato editorial premium alinhado à skill `/medpro-carrossel`
 - **Stories** (1080×1920, opcional): versão enxuta em 5-6 stories respeitando safe zones do IG
-- **Cards Anki embutidos** nos slides centrais (CSS real do Anki da Mariana: Helvetica + cloze azul)
+- **Cards Anki embutidos**: fundo branco/off, pergunta Inter preta, resposta em **azul cloze `#1F00FF`** com uma palavra-chave sublinhada (estilo screenshot raw do Anki)
+
+## Identidade visual (resumida)
+
+- **Paleta**: navy `#0F2340`, off `#FAFAF7`, cream `#EFE9D9`, red `#C9352B`, gold `#C9A961`, black `#0A0A0A`, cloze blue `#1F00FF`
+- **Fontes**: Fraunces (headlines 800-900), Inter (corpo 400-700), Caveat (assinatura "Feito por aprovados"), JetBrains Mono (eyebrows `§ NN —`, folio)
+- **Logo MedPro**: SÓ na capa e CTA final. Lâminas do meio sem logo.
+- **Folio**: `PADRÃO MEDPRO / DIRETO AO PONTO` no canto inferior direito (não usar paginação numérica)
+- **Pontuação como ornamento**: ponto/interrogação gigante em `RED` ou `GOLD`
+- **Referências editoriais**: Bloomberg Businessweek, Osler, NYT Magazine, Granta
+
+Detalhes completos em [references/design-system.md](references/design-system.md).
 
 ## Fluxo de trabalho
 
