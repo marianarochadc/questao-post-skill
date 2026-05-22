@@ -177,8 +177,11 @@ def draw_folio(d, dark=False):
 # Logo grande à esquerda + "@MedProFlashcards" JetBrains Mono à direita
 # SEM linha divisória
 # ============================================================
-def draw_header(canvas, dark=False):
-    """Header MedPro: logo grande + handle JetBrains Mono. Sem linha divisória."""
+def draw_header(canvas, dark=False, handle_size=48):
+    """Header MedPro: logo grande + handle JetBrains Mono. Sem linha divisória.
+    handle_size permite reduzir o @ quando o slide tem outro elemento competindo
+    pelo destaque (ex: capa com BANCA + ANO gigantes).
+    """
     logo = (LOGO_CREAM if dark else LOGO_NAVY).copy()
     logo_size = 140
     ratio = logo_size / logo.height
@@ -188,8 +191,7 @@ def draw_header(canvas, dark=False):
     img = rgba.convert("RGB")
 
     d = ImageDraw.Draw(img)
-    # Handle em JetBrains Mono, CamelCase, tamanho proporcional ao logo
-    f_handle = FM(48, 600)
+    f_handle = FM(handle_size, 600)
     handle = "@MedProFlashcards"
     hw = text_width(d, handle, f_handle)
     handle_color = OFF if dark else NAVY
@@ -206,7 +208,7 @@ def draw_header(canvas, dark=False):
 # ============================================================
 def slide_capa():
     img = bg_cream()
-    img = draw_header(img, dark=False)
+    img = draw_header(img, dark=False, handle_size=32)
     d = ImageDraw.Draw(img)
 
     # ============================================================
