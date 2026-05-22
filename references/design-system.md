@@ -131,10 +131,11 @@ def apply_paper(canvas, paper_path, dark=False, opacity=0.4):
 
 ### REGRAS DURAS — nunca quebrar
 
-1. **NUNCA usar eyebrow.** Proibido: `§ NN — TÍTULO`, bolinha vermelha + texto kicker, "QUESTÃO 17" em letterspacing wide no topo, etc. O header com logo + handle já assina visualmente. Eyebrow é ruído.
-2. **Header padronizado em TODOS os slides**: logo MedPro à esquerda (y=80, altura ~58px) + `@medproflashcards` Inter 600 à direita + linha divisória sutil em y=165. Vale pra capa, hook navy, cards Anki, manejo, CTA — todos.
-3. **Sem labels A/B/C/D** sobre imagens quando são cortes sequenciais. Use apenas quando a questão pede comparação explícita.
-4. **JetBrains Mono** é permitida APENAS em dois contextos: (a) folio `PADRÃO MEDPRO / DIRETO AO PONTO` no rodapé dos cards Anki; (b) badge `FLASHCARD MEDPRO` flutuando sobre o card interno dos slides Anki. Em qualquer outro lugar, usa Inter weight 600 com tracking wider.
+1. **NUNCA usar eyebrow.** Proibido: `§ NN — TÍTULO`, bolinha vermelha + texto kicker, "QUESTÃO 17" em letterspacing wide no topo, etc. O header com logo + handle já assina visualmente.
+2. **Header padronizado em TODOS os slides**: logo MedPro grande à esquerda (y=70, altura 140px) + `@MedProFlashcards` em JetBrains Mono 48px weight 600 à direita, centralizado verticalmente com o logo. **SEM linha divisória.**
+3. **Capitalização do handle**: sempre `@MedProFlashcards` em CamelCase. Não usar lowercase nem all caps.
+4. **Sem labels A/B/C/D** sobre imagens sequenciais. Apenas quando a questão pede comparação explícita.
+5. **JetBrains Mono** é permitida em: (a) handle do header em todos slides; (b) folio `PADRÃO MEDPRO / DIRETO AO PONTO` no rodapé dos cards Anki; (c) badge `FLASHCARD MEDPRO` no card interno dos slides Anki. Em qualquer outro lugar usar Inter.
 
 ### Convenções editoriais
 

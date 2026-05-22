@@ -173,28 +173,31 @@ def draw_folio(d, dark=False):
     draw_text(d, (W - 70 - w, H - 50), text, f, color, tracking=2)
 
 # ============================================================
-# Header padrão de TODOS os slides — logo MedPro + @medproflashcards
+# Header padrão de TODOS os slides
+# Logo grande à esquerda + "@MedProFlashcards" JetBrains Mono à direita
+# SEM linha divisória
 # ============================================================
 def draw_header(canvas, dark=False):
-    """Logo à esquerda + @medproflashcards à direita. Aplicado em todos os slides."""
+    """Header MedPro: logo grande + handle JetBrains Mono. Sem linha divisória."""
     logo = (LOGO_CREAM if dark else LOGO_NAVY).copy()
-    logo_size = 58
+    logo_size = 140
     ratio = logo_size / logo.height
     logo = logo.resize((int(logo.width * ratio), logo_size), Image.LANCZOS)
     rgba = canvas.convert("RGBA")
-    rgba.alpha_composite(logo, (70, 80))
+    rgba.alpha_composite(logo, (70, 70))
     img = rgba.convert("RGB")
 
     d = ImageDraw.Draw(img)
-    f_handle = FI(20, 600)
-    handle = "@medproflashcards"
+    # Handle em JetBrains Mono, CamelCase, tamanho proporcional ao logo
+    f_handle = FM(48, 600)
+    handle = "@MedProFlashcards"
     hw = text_width(d, handle, f_handle)
-    handle_color = OFF if dark else BLACK
-    d.text((W - 70 - hw, 100), handle, font=f_handle, fill=handle_color)
-
-    # Linha divisória sutil
-    line_color = (180, 180, 175) if dark else (160, 156, 145)
-    d.line([(70, 165), (W - 70, 165)], fill=line_color, width=1)
+    handle_color = OFF if dark else NAVY
+    # Centralizar verticalmente com o logo
+    bb = d.textbbox((0, 0), handle, font=f_handle)
+    th = bb[3] - bb[1]
+    handle_y = 70 + (logo_size - th) // 2 - 8
+    d.text((W - 70 - hw, handle_y), handle, font=f_handle, fill=handle_color)
 
     return img
 
@@ -210,7 +213,7 @@ def slide_capa():
     # EINSTEIN 2026: — Fraunces 900, GIGANTE (maior que tudo)
     # ============================================================
     f_brand = FF(195, 900, soft=20)
-    brand_y = 220
+    brand_y = 260
     d.text((70, brand_y), "EINSTEIN", font=f_brand, fill=BLACK)
     d.text((70, brand_y + 170), "2026", font=f_brand, fill=BLACK)
     # Dois pontos vermelhos
@@ -270,11 +273,11 @@ def slide_caso():
     d = ImageDraw.Draw(img)
 
     f_h = FF(150, 900, soft=20)
-    d.text((70, 230), "O caso", font=f_h, fill=NAVY)
+    d.text((70, 280), "O caso", font=f_h, fill=NAVY)
     # Ponto vermelho gigante
     f_dot = FF(150, 900, soft=20)
     after_x = 70 + text_width(d, "O caso", f_h)
-    d.text((after_x, 230), ".", font=f_dot, fill=RED)
+    d.text((after_x, 280), ".", font=f_dot, fill=RED)
 
     f_head = FI(22, 700)
     f_body = FF(40, 500, soft=20)
@@ -285,7 +288,7 @@ def slide_caso():
         ("EXAME",       "FC 125 · PA 110×85 · abdome intocável por dor."),
         ("APÓS A TC",   "Rebaixamento, hipotensão, má perfusão."),
     ]
-    y = 470
+    y = 520
     for head_text, body_text in blocks:
         draw_text(d, (70, y), head_text, f_head, GOLD, tracking=4)
         lines = wrap(d, body_text, f_body, W - 140)
@@ -308,16 +311,16 @@ def slide_hook():
 
     # Aspas tipográficas monumentais em vermelho
     f_quote = FF(340, 900, soft=20)
-    d.text((50, 240), "“", font=f_quote, fill=RED)
+    d.text((50, 280), "“", font=f_quote, fill=RED)
 
     f_big = FF(140, 800, soft=20)
-    d.text((70, 580), "Saberia", font=f_big, fill=OFF)
-    d.text((70, 730), "responder", font=f_big, fill=OFF)
+    d.text((70, 640), "Saberia", font=f_big, fill=OFF)
+    d.text((70, 790), "responder", font=f_big, fill=OFF)
     f_tail = FF(140, 800, soft=20)
-    d.text((70, 880), "agora", font=f_tail, fill=GOLD)
+    d.text((70, 940), "agora", font=f_tail, fill=GOLD)
     f_punct = FF(170, 900, soft=20)
     qmark_x = 70 + text_width(d, "agora", f_tail) + 4
-    d.text((qmark_x, 850), "?", font=f_punct, fill=RED)
+    d.text((qmark_x, 910), "?", font=f_punct, fill=RED)
 
     img.save(f"{OUT}/slide_3.png", quality=95)
 
@@ -653,13 +656,13 @@ def slide_dx():
 
     # Headline
     f_h = FF(110, 900, soft=20)
-    d.text((70, 230), "Abdome agudo", font=f_h, fill=NAVY)
+    d.text((70, 280), "Abdome agudo", font=f_h, fill=NAVY)
     f_h2 = FF(110, 900, soft=20)
-    d.text((70, 355), "perfurativo", font=f_h2, fill=NAVY)
+    d.text((70, 405), "perfurativo", font=f_h2, fill=NAVY)
     # Ponto vermelho
     f_punct = FF(140, 900, soft=20)
     dot_x = 70 + text_width(d, "perfurativo", f_h2)
-    d.text((dot_x, 345), ".", font=f_punct, fill=RED)
+    d.text((dot_x, 395), ".", font=f_punct, fill=RED)
 
     # TC à esquerda
     tc = Image.open(TC_SRC).convert("RGB")
@@ -668,7 +671,7 @@ def slide_dx():
     new_size = (int(tc.width*ratio), int(tc.height*ratio))
     tc = tc.resize(new_size, Image.LANCZOS)
     iw, ih = new_size
-    tc_x, tc_y = 70, 560
+    tc_x, tc_y = 70, 600
     img.paste(tc, (tc_x, tc_y))
 
     # Bullets à direita
@@ -704,10 +707,10 @@ def slide_manejo():
     d = ImageDraw.Draw(img)
 
     f_h = FF(150, 900, soft=20)
-    d.text((70, 230), "O manejo", font=f_h, fill=NAVY)
+    d.text((70, 280), "O manejo", font=f_h, fill=NAVY)
     f_dot = FF(150, 900, soft=20)
     dot_x = 70 + text_width(d, "O manejo", f_h)
-    d.text((dot_x, 230), ".", font=f_dot, fill=RED)
+    d.text((dot_x, 280), ".", font=f_dot, fill=RED)
 
     items = [
         ("01", "RESSUSCITAR",  "Cristaloide em bolus + UTI. Alvo: PAM ≥ 65."),
@@ -719,7 +722,7 @@ def slide_manejo():
     f_num   = FF(78, 900, soft=20)
     f_title = FI(30, 700)
     f_body  = FI(28, 500)
-    y = 520
+    y = 570
     for num, title, txt in items:
         d.text((70, y), num, font=f_num, fill=GOLD)
         d.text((200, y + 10), title, font=f_title, fill=NAVY)
@@ -749,30 +752,24 @@ def slide_cta():
     cv_d.text((50, 200), "aprovados.", font=f_caveat, fill=RED)
     cv_layer = cv_layer.rotate(-2.5, resample=Image.BICUBIC, expand=False)
     rgba = img.convert("RGBA")
-    rgba.alpha_composite(cv_layer, (10, 380))
+    rgba.alpha_composite(cv_layer, (10, 440))
     img = rgba.convert("RGB")
     d = ImageDraw.Draw(img)
 
     # Linha
-    d.line([(70, 920), (W - 70, 920)], fill=(180, 180, 175), width=1)
+    d.line([(70, 980), (W - 70, 980)], fill=(180, 180, 175), width=1)
 
     # Stats em Inter
     f_stats = FI(28, 500)
     stats = "+19k flashcards · +700 aprovados · link na bio"
     sw = text_width(d, stats, f_stats)
-    d.text(((W - sw) // 2, 970), stats, font=f_stats, fill=CREAM)
+    d.text(((W - sw) // 2, 1030), stats, font=f_stats, fill=CREAM)
 
-    # @handle em Fraunces
-    f_handle = FF(60, 800, soft=20)
-    handle = "@medproflashcards"
-    hw = text_width(d, handle, f_handle)
-    d.text(((W - hw) // 2, 1060), handle, font=f_handle, fill=OFF)
-
-    # URL em Inter (sem JBMono — REGRA: nada de eyebrow, mas folio/URL pode usar mono — mantenho)
-    f_url = FI(18, 600)
+    # URL em mono
+    f_url = FM(22, 500)
     url = "medproflashcards.com.br/links"
     uw = text_width(d, url, f_url, tracking=3)
-    draw_text(d, ((W - uw) // 2, 1160), url, f_url, GOLD, tracking=3)
+    draw_text(d, ((W - uw) // 2, 1140), url, f_url, GOLD, tracking=3)
 
     img.save(f"{OUT}/slide_9.png", quality=95)
 

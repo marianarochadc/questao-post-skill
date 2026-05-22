@@ -24,11 +24,12 @@ Pega uma questão (texto + imagens) e gera:
 
 ## REGRAS DURAS (não negociáveis)
 
-1. **NUNCA usar eyebrow.** Nada de `§ 02 — Tese`, "§ NN — XYZ" no topo de slides, bolinhas vermelhas com texto, etc. Foi removido em definitivo. O header com logo + handle já cumpre o papel de assinatura editorial.
-2. **Logo + @medproflashcards no topo de TODOS os slides** (inclusive capa, hook, dx, manejo, CTA). Linha divisória sutil abaixo.
-3. **Sem labels A/B/C/D em imagens** quando elas são meramente cortes sequenciais. Use labels só quando a questão pede comparação explícita entre múltiplas alternativas (caso raro).
-4. **Capa**: nome da banca + ano EM CIMA, GIGANTES (Fraunces 900, ~190-200px), seguido por pergunta menor (Fraunces 700, ~56-60px). Sem assinatura Caveat duplicando o branding (já tem logo no header).
-5. **Sem JetBrains Mono.** Substituído por Inter weight 600 com tracking wider quando precisar de "rótulo técnico".
+1. **NUNCA usar eyebrow.** Nada de `§ 02 — Tese`, "§ NN — XYZ" no topo de slides, bolinhas vermelhas com texto. Removido em definitivo.
+2. **Header em TODOS os slides**: logo MedPro grande à esquerda (140px altura) + `@MedProFlashcards` em JetBrains Mono 48px weight 600 à direita. **SEM linha divisória.**
+3. **Capitalização do handle**: sempre `@MedProFlashcards` em CamelCase (M, P, F maiúsculos). Não usar lowercase.
+4. **Sem labels A/B/C/D** em imagens sequenciais. Só quando a questão pede comparação explícita.
+5. **Capa**: BANCA + ANO em Fraunces 900 ~190-200px (maior que tudo), pergunta menor em Fraunces 700.
+6. **JetBrains Mono** permitida em: (a) handle do header, (b) folio dos cards Anki, (c) badge "FLASHCARD MEDPRO". Mais nada.
 
 Detalhes completos em [references/design-system.md](references/design-system.md).
 
