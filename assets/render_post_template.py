@@ -111,37 +111,44 @@ def text_width(d, text, font, tracking=0):
 # ============================================================
 PAPER_RAW = Image.open(f"{BRAND}/paper.png").convert("RGB")
 
-def apply_paper(canvas, dark=False, opacity=0.55):
-    """Aplica textura paper.png com blend simulando multiply/soft-light."""
+def apply_paper(canvas, dark=False, intensity=1.0):
+    """Aplica textura paper.png. intensity 0-1.5 controla a força da textura.
+    1.0 = multiply direto (textura plena)
+    >1.0 = textura forte (subtrai brilho dos pixels altos)
+    <1.0 = textura suave
+    """
     paper = PAPER_RAW.resize(canvas.size, Image.LANCZOS)
     if dark:
-        # Soft-light fake: aplica paper como overlay claro com alpha baixo
-        # Pega a textura, reduz contraste, blend
+        # Soft-light fake
         paper_rgba = paper.convert("RGBA")
-        # Reduz alpha (suaviza)
-        a = paper_rgba.split()[3].point(lambda v: int(v * 0.18))
+        a = paper_rgba.split()[3].point(lambda v: min(255, int(v * 0.45 * intensity)))
         paper_rgba.putalpha(a)
         c = canvas.convert("RGBA")
         c.alpha_composite(paper_rgba)
         return c.convert("RGB")
     else:
-        # Multiply
-        # Para clarear o multiply (não escurecer demais), lerp da textura com branco
-        mixed = Image.blend(Image.new("RGB", canvas.size, (255, 255, 255)),
-                            paper, opacity * 0.5)
-        return ImageChops.multiply(canvas, mixed)
+        # Multiply com intensity controlando o "grão" da textura
+        # Pra dar mais grão sem escurecer demais, ajusto a textura
+        # antes do multiply: clareio pra não escurecer base, mas mantenho contraste
+        if intensity >= 1.0:
+            # textura plena
+            return ImageChops.multiply(canvas, paper)
+        else:
+            mixed = Image.blend(Image.new("RGB", canvas.size, (255, 255, 255)),
+                                paper, intensity)
+            return ImageChops.multiply(canvas, mixed)
 
 def bg_navy():
     img = Image.new("RGB", (W, H), NAVY)
-    return apply_paper(img, dark=True)
+    return apply_paper(img, dark=True, intensity=0.7)
 
 def bg_cream():
     img = Image.new("RGB", (W, H), CREAM)
-    return apply_paper(img, dark=False)
+    return apply_paper(img, dark=False, intensity=1.0)
 
 def bg_off():
     img = Image.new("RGB", (W, H), OFF)
-    return apply_paper(img, dark=False, opacity=0.35)
+    return apply_paper(img, dark=False, intensity=1.0)
 
 # ============================================================
 # Logo
@@ -443,13 +450,11 @@ def slide_anki_card(headline, pergunta_segments, extra=None,
     rgba.alpha_composite(shadow_layer, (card_x - shadow_pad, card_y - shadow_pad))
     img = rgba.convert("RGB")
 
-    # Card off arredondado COM textura paper sutil (mantém aparência editorial)
+    # Card off arredondado COM textura paper PLENA
     card_off_solid = Image.new("RGB", (card_w, card_h), OFF)
     paper_tile = PAPER_RAW.resize((card_w, card_h), Image.LANCZOS)
-    # multiply suave: mistura textura clareada com o off
-    blended = Image.blend(Image.new("RGB", (card_w, card_h), (255, 255, 255)),
-                          paper_tile, 0.18)
-    card_off_textured = ImageChops.multiply(card_off_solid, blended)
+    # multiply direto: textura cheia
+    card_off_textured = ImageChops.multiply(card_off_solid, paper_tile)
     # aplica máscara arredondada
     mask = Image.new("L", (card_w, card_h), 0)
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, card_w, card_h], radius=28, fill=255)
