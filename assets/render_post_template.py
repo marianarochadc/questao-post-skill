@@ -177,10 +177,10 @@ def draw_folio(d, dark=False):
 # Logo grande à esquerda + "@MedProFlashcards" JetBrains Mono à direita
 # SEM linha divisória
 # ============================================================
-def draw_header(canvas, dark=False, handle_size=48):
+def draw_header(canvas, dark=False, handle_size=32):
     """Header MedPro: logo grande + handle JetBrains Mono. Sem linha divisória.
-    handle_size permite reduzir o @ quando o slide tem outro elemento competindo
-    pelo destaque (ex: capa com BANCA + ANO gigantes).
+    handle_size default 32 (padronizado). Suba pra ~48 só se quiser destaque
+    extra do handle em algum slide específico (raro).
     """
     logo = (LOGO_CREAM if dark else LOGO_NAVY).copy()
     logo_size = 140
@@ -208,7 +208,7 @@ def draw_header(canvas, dark=False, handle_size=48):
 # ============================================================
 def slide_capa():
     img = bg_cream()
-    img = draw_header(img, dark=False, handle_size=32)
+    img = draw_header(img, dark=False)
     d = ImageDraw.Draw(img)
 
     # ============================================================
@@ -443,13 +443,24 @@ def slide_anki_card(headline, pergunta_segments, extra=None,
     rgba.alpha_composite(shadow_layer, (card_x - shadow_pad, card_y - shadow_pad))
     img = rgba.convert("RGB")
 
-    # Card off arredondado
-    card_layer = Image.new("RGBA", (card_w, card_h), (0,0,0,0))
-    cd = ImageDraw.Draw(card_layer)
-    cd.rounded_rectangle([0, 0, card_w, card_h], radius=28, fill=OFF + (255,),
-                         outline=(15, 35, 64, 26), width=1)
+    # Card off arredondado COM textura paper sutil (mantém aparência editorial)
+    card_off_solid = Image.new("RGB", (card_w, card_h), OFF)
+    paper_tile = PAPER_RAW.resize((card_w, card_h), Image.LANCZOS)
+    # multiply suave: mistura textura clareada com o off
+    blended = Image.blend(Image.new("RGB", (card_w, card_h), (255, 255, 255)),
+                          paper_tile, 0.18)
+    card_off_textured = ImageChops.multiply(card_off_solid, blended)
+    # aplica máscara arredondada
+    mask = Image.new("L", (card_w, card_h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, card_w, card_h], radius=28, fill=255)
+    card_off_rgba = card_off_textured.convert("RGBA")
+    card_off_rgba.putalpha(mask)
     rgba = img.convert("RGBA")
-    rgba.alpha_composite(card_layer, (card_x, card_y))
+    rgba.alpha_composite(card_off_rgba, (card_x, card_y))
+    # outline sutil
+    out = ImageDraw.Draw(rgba)
+    out.rounded_rectangle([card_x, card_y, card_x + card_w, card_y + card_h],
+                          radius=28, outline=(15, 35, 64, 26), width=1)
     img = rgba.convert("RGB")
 
     d = ImageDraw.Draw(img)
