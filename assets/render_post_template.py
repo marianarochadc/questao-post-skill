@@ -765,7 +765,9 @@ def slide_manejo():
     img.save(f"{OUT}/slide_8.png", quality=95)
 
 # ============================================================
-# SLIDE 9 — CTA (NAVY) — closing editorial
+# SLIDE 9 — CTA (NAVY) — direct response marketing
+# Estrutura: Pre-headline → Hook desejo → Prova social → CTA pill →
+# Micro-CTAs hierárquicos
 # ============================================================
 def slide_cta():
     img = bg_navy()
@@ -773,68 +775,92 @@ def slide_cta():
     d = ImageDraw.Draw(img)
 
     # ====================================
-    # "Feito por aprovados." Caveat gigante, centralizada, rotação -3°
+    # BLOCK 1 — Pre-headline (audiência específica + Caveat)
     # ====================================
-    f_caveat = FC(210, 700)
-    # Renderiza em layer pra rotacionar
-    cv_layer = Image.new("RGBA", (W, 500), (0, 0, 0, 0))
-    cv_d = ImageDraw.Draw(cv_layer)
-
-    # Linha 1: "Feito por"
-    l1 = "Feito por"
-    bb1 = cv_d.textbbox((0, 0), l1, font=f_caveat)
-    l1w = bb1[2] - bb1[0]
-    cv_d.text(((W - l1w) // 2, 0), l1, font=f_caveat, fill=RED)
-
-    # Linha 2: "aprovados."
-    l2 = "aprovados."
-    bb2 = cv_d.textbbox((0, 0), l2, font=f_caveat)
-    l2w = bb2[2] - bb2[0]
-    cv_d.text(((W - l2w) // 2, 180), l2, font=f_caveat, fill=RED)
-
-    cv_layer = cv_layer.rotate(-3, resample=Image.BICUBIC, expand=False)
+    f_pre = FC(70, 600)
+    pre = "Pra quem quer passar."
+    pw = text_width(d, pre, f_pre)
+    # Pequena rotação pra dar handwritten feel
+    pre_layer = Image.new("RGBA", (W, 100), (0, 0, 0, 0))
+    pre_d = ImageDraw.Draw(pre_layer)
+    pre_d.text(((W - pw) // 2, 0), pre, font=f_pre, fill=GOLD)
+    pre_layer = pre_layer.rotate(-2, resample=Image.BICUBIC, expand=False)
     rgba = img.convert("RGBA")
-    rgba.alpha_composite(cv_layer, (0, 380))
+    rgba.alpha_composite(pre_layer, (0, 260))
     img = rgba.convert("RGB")
     d = ImageDraw.Draw(img)
 
     # ====================================
-    # Linha sutil gold + subtítulo italic Fraunces
+    # BLOCK 2 — Hook headline (DESEJO + PROVA SOCIAL forte)
+    # +700 aprovados é a peça que vende
     # ====================================
-    line_y = 950
-    line_w = 200
-    d.line([(W//2 - line_w, line_y), (W//2 + line_w, line_y)], fill=GOLD, width=2)
+    f_num = FF(220, 900, soft=20)
+    num_text = "+700"
+    nw = text_width(d, num_text, f_num)
+    d.text(((W - nw) // 2, 360), num_text, font=f_num, fill=GOLD)
 
-    # Subtítulo italic Fraunces 400 gold — "fechamento editorial"
-    f_sub = FF(36, 400, soft=20)
-    sub = "Residência médica, sem rodeio."
-    sw = text_width(d, sub, f_sub)
-    d.text(((W - sw) // 2, line_y + 30), sub, font=f_sub, fill=CREAM)
-
-    # ====================================
-    # Stats em Inter 500
-    # ====================================
-    f_stats = FI(28, 500)
-    stats = "+19k flashcards   ·   +700 aprovados"
-    ssw = text_width(d, stats, f_stats)
-    d.text(((W - ssw) // 2, line_y + 110), stats, font=f_stats, fill=(170, 175, 180))
+    f_sub = FF(46, 700, soft=20)
+    sub_l1 = "aprovados em USP,"
+    sub_l2 = "Einstein, Unifesp."
+    s1w = text_width(d, sub_l1, f_sub)
+    s2w = text_width(d, sub_l2, f_sub)
+    d.text(((W - s1w) // 2, 600), sub_l1, font=f_sub, fill=OFF)
+    d.text(((W - s2w) // 2, 660), sub_l2, font=f_sub, fill=OFF)
 
     # ====================================
-    # URL em mono GOLD (sem /links)
+    # BLOCK 3 — Bridge (desejo → ação) com promessa concreta
     # ====================================
-    f_url = FM(26, 600)
-    url = "medproflashcards.com.br"
-    uw = text_width(d, url, f_url, tracking=3)
-    draw_text(d, ((W - uw) // 2, line_y + 180), url, f_url, GOLD, tracking=3)
+    f_bridge = FF(34, 400, soft=20)
+    bridge = "Você está a um clique do mesmo deck."
+    bw = text_width(d, bridge, f_bridge)
+    d.text(((W - bw) // 2, 790), bridge, font=f_bridge, fill=(200, 205, 215))
 
     # ====================================
-    # Microcopy abaixo da URL
+    # BLOCK 4 — CTA pill GOLD com URL (ação principal)
     # ====================================
-    f_micro = FI(20, 500)
-    micro = "LINK NA BIO"
-    mw = text_width(d, micro, f_micro, tracking=4)
-    draw_text(d, ((W - mw) // 2, line_y + 230),
-              micro, f_micro, (140, 150, 160), tracking=4)
+    pill_w = 760
+    pill_h = 140
+    pill_x = (W - pill_w) // 2
+    pill_y = 880
+    d.rounded_rectangle([pill_x, pill_y, pill_x + pill_w, pill_y + pill_h],
+                        radius=18, fill=GOLD)
+
+    # Linha 1 dentro do pill — comando
+    f_cta_l1 = FI(26, 700)
+    cta_l1 = "ACESSE O DECK COMPLETO"
+    bb = d.textbbox((0, 0), cta_l1, font=f_cta_l1)
+    c1w = text_width(d, cta_l1, f_cta_l1, tracking=3)
+    draw_text(d, ((W - c1w) // 2, pill_y + 24),
+              cta_l1, f_cta_l1, NAVY, tracking=3)
+
+    # Linha 2 dentro do pill — URL
+    f_cta_url = FM(34, 700)
+    cta_url = "medproflashcards.com.br"
+    uw = text_width(d, cta_url, f_cta_url)
+    d.text(((W - uw) // 2, pill_y + 70), cta_url, font=f_cta_url, fill=NAVY)
+
+    # ====================================
+    # BLOCK 5 — Micro-CTAs hierárquicos (engajamento secundário)
+    # ====================================
+    f_micro = FI(22, 600)
+    micros = "SALVA   ·   MANDA PRA ALGUÉM   ·   LINK NA BIO"
+    mw = text_width(d, micros, f_micro, tracking=4)
+    draw_text(d, ((W - mw) // 2, 1075),
+              micros, f_micro, CREAM, tracking=4)
+
+    # ====================================
+    # BLOCK 6 — Assinatura final em Caveat (closing brand)
+    # ====================================
+    f_sig = FC(80, 700)
+    sig = "Feito por aprovados."
+    sig_layer = Image.new("RGBA", (W, 120), (0, 0, 0, 0))
+    sig_d = ImageDraw.Draw(sig_layer)
+    sw = text_width(d, sig, f_sig)
+    sig_d.text(((W - sw) // 2, 0), sig, font=f_sig, fill=RED)
+    sig_layer = sig_layer.rotate(-2, resample=Image.BICUBIC, expand=False)
+    rgba = img.convert("RGBA")
+    rgba.alpha_composite(sig_layer, (0, 1180))
+    img = rgba.convert("RGB")
 
     img.save(f"{OUT}/slide_9.png", quality=95)
 
