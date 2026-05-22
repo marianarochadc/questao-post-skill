@@ -765,9 +765,9 @@ def slide_manejo():
     img.save(f"{OUT}/slide_8.png", quality=95)
 
 # ============================================================
-# SLIDE 9 — CTA (NAVY) — direct response marketing
-# Estrutura: Pre-headline → Hook desejo → Prova social → CTA pill →
-# Micro-CTAs hierárquicos
+# SLIDE 9 — CTA editorial premium (Bloomberg/Osler style)
+# Minimalismo + hierarquia tipográfica > pills/buttons
+# A URL VIRA o headline. Prova social é support. Assinatura fecha.
 # ============================================================
 def slide_cta():
     img = bg_navy()
@@ -775,91 +775,73 @@ def slide_cta():
     d = ImageDraw.Draw(img)
 
     # ====================================
-    # BLOCK 1 — Pre-headline (audiência específica + Caveat)
+    # BLOCK 1 — Manifesto-statement curto
     # ====================================
-    f_pre = FC(70, 600)
-    pre = "Pra quem quer passar."
-    pw = text_width(d, pre, f_pre)
-    # Pequena rotação pra dar handwritten feel
-    pre_layer = Image.new("RGBA", (W, 100), (0, 0, 0, 0))
-    pre_d = ImageDraw.Draw(pre_layer)
-    pre_d.text(((W - pw) // 2, 0), pre, font=f_pre, fill=GOLD)
-    pre_layer = pre_layer.rotate(-2, resample=Image.BICUBIC, expand=False)
-    rgba = img.convert("RGBA")
-    rgba.alpha_composite(pre_layer, (0, 260))
-    img = rgba.convert("RGB")
-    d = ImageDraw.Draw(img)
+    f_lead = FF(54, 400, soft=20)
+    lead_l1 = "Você leu uma questão."
+    lead_l2 = "Faltam mais 99."
+    s1w = text_width(d, lead_l1, f_lead)
+    s2w = text_width(d, lead_l2, f_lead)
+    d.text(((W - s1w) // 2, 320), lead_l1, font=f_lead, fill=CREAM)
+
+    f_lead2 = FF(56, 700, soft=20)
+    s2w = text_width(d, lead_l2, f_lead2)
+    d.text(((W - s2w) // 2, 400), lead_l2, font=f_lead2, fill=GOLD)
 
     # ====================================
-    # BLOCK 2 — Hook headline (DESEJO + PROVA SOCIAL forte)
-    # +700 aprovados é a peça que vende
+    # BLOCK 2 — Linha gold sutil
     # ====================================
-    f_num = FF(220, 900, soft=20)
-    num_text = "+700"
-    nw = text_width(d, num_text, f_num)
-    d.text(((W - nw) // 2, 360), num_text, font=f_num, fill=GOLD)
-
-    f_sub = FF(46, 700, soft=20)
-    sub_l1 = "aprovados em USP,"
-    sub_l2 = "Einstein, Unifesp."
-    s1w = text_width(d, sub_l1, f_sub)
-    s2w = text_width(d, sub_l2, f_sub)
-    d.text(((W - s1w) // 2, 600), sub_l1, font=f_sub, fill=OFF)
-    d.text(((W - s2w) // 2, 660), sub_l2, font=f_sub, fill=OFF)
+    line_y = 540
+    line_w = 80
+    d.line([(W//2 - line_w, line_y), (W//2 + line_w, line_y)], fill=GOLD, width=2)
 
     # ====================================
-    # BLOCK 3 — Bridge (desejo → ação) com promessa concreta
+    # BLOCK 3 — URL-como-headline (CTA principal, sem pill)
     # ====================================
-    f_bridge = FF(34, 400, soft=20)
-    bridge = "Você está a um clique do mesmo deck."
-    bw = text_width(d, bridge, f_bridge)
-    d.text(((W - bw) // 2, 790), bridge, font=f_bridge, fill=(200, 205, 215))
+    f_url1 = FF(108, 900, soft=20)
+    url_l1 = "medproflashcards"
+    u1w = text_width(d, url_l1, f_url1)
+    d.text(((W - u1w) // 2, 600), url_l1, font=f_url1, fill=OFF)
+
+    # ".com.br" em italic Fraunces, ponto RED como ornamento
+    f_url2 = FF(72, 400, soft=20)
+    dot = "."
+    dom = "com.br"
+    dot_w = text_width(d, dot, f_url2)
+    dom_w = text_width(d, dom, f_url2)
+    total_w2 = dot_w + dom_w
+    x2 = (W - total_w2) // 2
+    d.text((x2, 730), dot, font=f_url2, fill=RED)
+    d.text((x2 + dot_w, 730), dom, font=f_url2, fill=OFF)
 
     # ====================================
-    # BLOCK 4 — CTA pill GOLD com URL (ação principal)
+    # BLOCK 4 — Prova social em italic Fraunces (support, não headline)
     # ====================================
-    pill_w = 760
-    pill_h = 140
-    pill_x = (W - pill_w) // 2
-    pill_y = 880
-    d.rounded_rectangle([pill_x, pill_y, pill_x + pill_w, pill_y + pill_h],
-                        radius=18, fill=GOLD)
-
-    # Linha 1 dentro do pill — comando
-    f_cta_l1 = FI(26, 700)
-    cta_l1 = "ACESSE O DECK COMPLETO"
-    bb = d.textbbox((0, 0), cta_l1, font=f_cta_l1)
-    c1w = text_width(d, cta_l1, f_cta_l1, tracking=3)
-    draw_text(d, ((W - c1w) // 2, pill_y + 24),
-              cta_l1, f_cta_l1, NAVY, tracking=3)
-
-    # Linha 2 dentro do pill — URL
-    f_cta_url = FM(34, 700)
-    cta_url = "medproflashcards.com.br"
-    uw = text_width(d, cta_url, f_cta_url)
-    d.text(((W - uw) // 2, pill_y + 70), cta_url, font=f_cta_url, fill=NAVY)
+    f_proof = FF(28, 400, soft=20)
+    proof = "+700 aprovados em USP, Einstein, Unifesp."
+    pw = text_width(d, proof, f_proof)
+    d.text(((W - pw) // 2, 860), proof, font=f_proof, fill=(170, 175, 185))
 
     # ====================================
-    # BLOCK 5 — Micro-CTAs hierárquicos (engajamento secundário)
+    # BLOCK 5 — "LINK NA BIO" em Mono CAPS pequeno (direcionamento sutil)
     # ====================================
-    f_micro = FI(22, 600)
-    micros = "SALVA   ·   MANDA PRA ALGUÉM   ·   LINK NA BIO"
-    mw = text_width(d, micros, f_micro, tracking=4)
-    draw_text(d, ((W - mw) // 2, 1075),
-              micros, f_micro, CREAM, tracking=4)
+    f_dir = FM(22, 600)
+    dir_text = "LINK NA BIO"
+    dw = text_width(d, dir_text, f_dir, tracking=5)
+    draw_text(d, ((W - dw) // 2, 930), dir_text, f_dir, GOLD, tracking=5)
 
     # ====================================
-    # BLOCK 6 — Assinatura final em Caveat (closing brand)
+    # BLOCK 6 — Assinatura Caveat (closing brand, único momento "humano")
     # ====================================
-    f_sig = FC(80, 700)
+    f_sig = FC(110, 700)
     sig = "Feito por aprovados."
-    sig_layer = Image.new("RGBA", (W, 120), (0, 0, 0, 0))
-    sig_d = ImageDraw.Draw(sig_layer)
     sw = text_width(d, sig, f_sig)
+    sig_layer = Image.new("RGBA", (W, 180), (0, 0, 0, 0))
+    sig_d = ImageDraw.Draw(sig_layer)
     sig_d.text(((W - sw) // 2, 0), sig, font=f_sig, fill=RED)
-    sig_layer = sig_layer.rotate(-2, resample=Image.BICUBIC, expand=False)
+    sig_layer = sig_layer.rotate(-2.5, resample=Image.BICUBIC, expand=False)
     rgba = img.convert("RGBA")
-    rgba.alpha_composite(sig_layer, (0, 1180))
+    rgba.alpha_composite(sig_layer, (0, 1080))
     img = rgba.convert("RGB")
 
     img.save(f"{OUT}/slide_9.png", quality=95)
