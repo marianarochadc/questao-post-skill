@@ -775,16 +775,15 @@ def slide_cta():
     d = ImageDraw.Draw(img)
 
     # ====================================
-    # BLOCK 1 — Manifesto-statement curto
+    # BLOCK 1 — Lead reflexivo + prova social embutida
     # ====================================
-    f_lead = FF(54, 400, soft=20)
-    lead_l1 = "Você leu uma questão."
-    lead_l2 = "Faltam mais 99."
+    f_lead = FF(50, 400, soft=20)
+    lead_l1 = "Você viu 3 flashcards,"
     s1w = text_width(d, lead_l1, f_lead)
-    s2w = text_width(d, lead_l2, f_lead)
     d.text(((W - s1w) // 2, 320), lead_l1, font=f_lead, fill=CREAM)
 
-    f_lead2 = FF(56, 700, soft=20)
+    f_lead2 = FF(52, 700, soft=20)
+    lead_l2 = "são mais de 19 mil."
     s2w = text_width(d, lead_l2, f_lead2)
     d.text(((W - s2w) // 2, 400), lead_l2, font=f_lead2, fill=GOLD)
 
@@ -796,42 +795,42 @@ def slide_cta():
     d.line([(W//2 - line_w, line_y), (W//2 + line_w, line_y)], fill=GOLD, width=2)
 
     # ====================================
-    # BLOCK 3 — URL-como-headline (CTA principal, sem pill)
+    # BLOCK 3 — URL como headline (menor, mais respirado)
     # ====================================
-    f_url1 = FF(108, 900, soft=20)
+    f_url1 = FF(78, 900, soft=20)
     url_l1 = "medproflashcards"
     u1w = text_width(d, url_l1, f_url1)
-    d.text(((W - u1w) // 2, 600), url_l1, font=f_url1, fill=OFF)
+    d.text(((W - u1w) // 2, 610), url_l1, font=f_url1, fill=OFF)
 
     # ".com.br" em italic Fraunces, ponto RED como ornamento
-    f_url2 = FF(72, 400, soft=20)
+    f_url2 = FF(54, 400, soft=20)
     dot = "."
     dom = "com.br"
     dot_w = text_width(d, dot, f_url2)
     dom_w = text_width(d, dom, f_url2)
     total_w2 = dot_w + dom_w
     x2 = (W - total_w2) // 2
-    d.text((x2, 730), dot, font=f_url2, fill=RED)
-    d.text((x2 + dot_w, 730), dom, font=f_url2, fill=OFF)
+    d.text((x2, 710), dot, font=f_url2, fill=RED)
+    d.text((x2 + dot_w, 710), dom, font=f_url2, fill=OFF)
 
     # ====================================
-    # BLOCK 4 — Prova social em italic Fraunces (support, não headline)
+    # BLOCK 4 — Prova social em italic Fraunces (+700 aprovados)
     # ====================================
     f_proof = FF(28, 400, soft=20)
     proof = "+700 aprovados em USP, Einstein, Unifesp."
     pw = text_width(d, proof, f_proof)
-    d.text(((W - pw) // 2, 860), proof, font=f_proof, fill=(170, 175, 185))
+    d.text(((W - pw) // 2, 830), proof, font=f_proof, fill=(170, 175, 185))
 
     # ====================================
-    # BLOCK 5 — "LINK NA BIO" em Mono CAPS pequeno (direcionamento sutil)
+    # BLOCK 5 — "LINK NA BIO" em Mono CAPS pequeno
     # ====================================
     f_dir = FM(22, 600)
     dir_text = "LINK NA BIO"
     dw = text_width(d, dir_text, f_dir, tracking=5)
-    draw_text(d, ((W - dw) // 2, 930), dir_text, f_dir, GOLD, tracking=5)
+    draw_text(d, ((W - dw) // 2, 900), dir_text, f_dir, GOLD, tracking=5)
 
     # ====================================
-    # BLOCK 6 — Assinatura Caveat (closing brand, único momento "humano")
+    # BLOCK 6 — Assinatura Caveat (closing brand)
     # ====================================
     f_sig = FC(110, 700)
     sig = "Feito por aprovados."
