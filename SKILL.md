@@ -25,11 +25,12 @@ Pega uma questão (texto + imagens) e gera:
 ## REGRAS DURAS (não negociáveis)
 
 1. **NUNCA usar eyebrow.** Nada de `§ 02 — Tese`, "§ NN — XYZ" no topo de slides, bolinhas vermelhas com texto. Removido em definitivo.
-2. **Header em TODOS os slides**: logo MedPro grande à esquerda (140px altura) + `@MedProFlashcards` em JetBrains Mono 48px weight 600 à direita. **SEM linha divisória.**
+2. **Header em TODOS os slides**: logo MedPro grande à esquerda (140px altura) + `@MedProFlashcards` em JetBrains Mono à direita. **SEM linha divisória.**
 3. **Capitalização do handle**: sempre `@MedProFlashcards` em CamelCase (M, P, F maiúsculos). Não usar lowercase.
 4. **Sem labels A/B/C/D** em imagens sequenciais. Só quando a questão pede comparação explícita.
 5. **Capa**: BANCA + ANO em Fraunces 900 ~190-200px (maior que tudo), pergunta menor em Fraunces 700.
 6. **JetBrains Mono** permitida em: (a) handle do header, (b) folio dos cards Anki, (c) badge "FLASHCARD MEDPRO". Mais nada.
+7. **LEGENDA SEMPRE VOLTADA PRA VENDA.** Conteúdo no carrossel + venda na legenda. Hook nas 2 primeiras linhas (corte do "...mais") → resumo do caso → agitação do problema/pegadinha → solução (deck) → CTA explícito (link na bio) → sign-off "Feito por aprovados." → 15-25 hashtags. Framework completo em [references/legenda.md](references/legenda.md).
 
 Detalhes completos em [references/design-system.md](references/design-system.md).
 
