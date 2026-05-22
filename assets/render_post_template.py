@@ -488,13 +488,25 @@ def slide_anki_card(headline, pergunta_segments, extra=None,
         extra_h = 18 + len(extra_lines) * int(22 * 1.4)
 
     img_h_render = 0
+    tc_w_eff = 0
+    tc_h_eff = 0
     if tc_image:
         tc_meta = Image.open(tc_image)
-        tc_w_target = inner_content_max_w
-        ratio = tc_w_target / tc_meta.width
-        img_h_render = int(tc_meta.height * ratio) + 24
+        # Limita a TC pra max 360px de altura E max ~70% da largura (centralizada)
+        max_tc_h = 360
+        max_tc_w = int(inner_content_max_w * 0.75)
+        ratio = min(max_tc_w / tc_meta.width, max_tc_h / tc_meta.height)
+        tc_w_eff = int(tc_meta.width * ratio)
+        tc_h_eff = int(tc_meta.height * ratio)
+        img_h_render = tc_h_eff + 24
 
-    inner_content_h = pergunta_h + extra_h + img_h_render
+    # Botões Anki (sempre presentes nos cards Anki)
+    btns_meta = Image.open(f"{BRAND}/anki-buttons.jpg")
+    btns_w_target = int(inner_content_max_w * 0.85)
+    btns_ratio = btns_w_target / btns_meta.width
+    btns_h_render = int(btns_meta.height * btns_ratio) + 28
+
+    inner_content_h = pergunta_h + extra_h + img_h_render + btns_h_render
     inner_h = inner_padding_y * 2 + inner_content_h
 
     # Border navy 2px + bg branco
@@ -538,17 +550,27 @@ def slide_anki_card(headline, pergunta_segments, extra=None,
             d.text((center_x - lw // 2, extra_y), ln, font=f_extra, fill=(85, 85, 85))
             extra_y += int(22 * 1.4)
 
-    # Imagem opcional dentro do card
+    # Imagem opcional dentro do card (centralizada, com limite de tamanho)
     if tc_image:
-        tc = Image.open(tc_image).convert("RGB")
-        tc_w_target = inner_content_max_w
-        ratio = tc_w_target / tc.width
-        tc_h_render = int(tc.height * ratio)
-        tc = tc.resize((tc_w_target, tc_h_render), Image.LANCZOS)
+        tc = Image.open(tc_image).convert("RGB").resize((tc_w_eff, tc_h_eff), Image.LANCZOS)
         img_y = extra_y + (24 if extra else 24)
         if not extra:
             img_y = pergunta_y + pergunta_h + 24
-        img.paste(tc, (inner_margin_x + inner_padding_x, img_y))
+        tc_x = inner_margin_x + (inner_w - tc_w_eff) // 2
+        img.paste(tc, (tc_x, img_y))
+        bottom_after_img = img_y + tc_h_eff
+    else:
+        bottom_after_img = extra_y if extra else (pergunta_y + pergunta_h)
+
+    # Botões Anki sempre — fica DENTRO do card branco no rodapé
+    btns = Image.open(f"{BRAND}/anki-buttons.jpg").convert("RGB")
+    btns_w_target = int(inner_content_max_w * 0.85)
+    btns_ratio = btns_w_target / btns.width
+    btns_h_final = int(btns.height * btns_ratio)
+    btns = btns.resize((btns_w_target, btns_h_final), Image.LANCZOS)
+    btns_y = bottom_after_img + 28
+    btns_x = inner_margin_x + (inner_w - btns_w_target) // 2
+    img.paste(btns, (btns_x, btns_y))
 
     # Footer: "Card curto. Resposta cirúrgica." + folio
     # JSX: padding "0 52px 36px", flex justify-content space-between

@@ -100,8 +100,14 @@ const SlideAnkiCard = ({ headline, pergunta, extra }) =>
           color: "#555", textAlign: "center", marginTop: 18,
         }}>{extra}</div>}
         {/* Imagem opcional */}
-        <img src={IMG.anki} style={{
-          display: "block", width: "100%", margin: "24px auto 0",
+        {IMG.anki && <img src={IMG.anki} style={{
+          display: "block", maxWidth: "75%", maxHeight: 360,
+          margin: "24px auto 0",
+        }} />}
+        {/* Botões Anki — sempre presentes */}
+        <img src="anki-buttons.jpg" style={{
+          display: "block", width: "85%",
+          margin: "28px auto 0",
         }} />
       </div>
 
@@ -158,7 +164,8 @@ A função `slide_anki_card(headline, pergunta_segments, extra=None, tc_image=No
 - Badge "FLASHCARD MEDPRO" em JetBrains Mono 15 weight 600 tracking ~5px, "FLASHCARD" em RED, "MEDPRO" em NAVY, posicionado em `top=-12, left=32` do card interno (sobrepondo a borda superior)
 - Pergunta Helvetica 32 centralizada com cloze azul (`#0000FF`) bold opcionalmente sublinhada
 - Extra Helvetica italic 22, color `#555`
-- Imagem opcional ocupando 100% da largura do card interno
+- Imagem opcional centralizada dentro do card branco (limite: max 360px altura E max 75% largura — pra deixar respiro pros botões)
+- **Botões Anki sempre presentes**: De novo / Difícil / Bom / Fácil. Asset em `assets/brand/anki-buttons.jpg` (fundo branco harmoniza com bg branco do card). Ocupam ~85% da largura interna, centralizados, abaixo da pergunta+extra+imagem.
 - Footer em `padding 0 52px 36px`:
   - Esquerda: "Card curto. Resposta cirúrgica." (Fraunces 28, "Card curto." NAVY weight 700, "Resposta cirúrgica." RED italic)
   - Direita: "PADRÃO MEDPRO\nDIRETO AO PONTO" JetBrains Mono 20 weight 500, navy ~55% alpha, tracking 4px
