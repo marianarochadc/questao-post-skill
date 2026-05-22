@@ -134,8 +134,8 @@ def apply_paper(canvas, dark=False, intensity=0.4):
         return Image.blend(canvas, textured, intensity)
 
 def bg_navy():
-    img = Image.new("RGB", (W, H), NAVY)
-    return apply_paper(img, dark=True, intensity=0.55)
+    # Navy puro #0F2340 — sem textura paper pra manter a cor profunda da paleta
+    return Image.new("RGB", (W, H), NAVY)
 
 def bg_cream():
     img = Image.new("RGB", (W, H), CREAM)
